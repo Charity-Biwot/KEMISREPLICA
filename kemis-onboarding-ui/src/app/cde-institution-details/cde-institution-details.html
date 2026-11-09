@@ -1,0 +1,307 @@
+<div class="page">
+
+  <button class="link" type="button" (click)="goBack()">
+    Back to dashboard
+  </button>
+
+  <p *ngIf="loading" class="muted">Loading institution details...</p>
+
+  <p *ngIf="error" class="alert" role="alert">{{ error }}</p>
+  <p *ngIf="success" class="success" role="status">{{ success }}</p>
+
+  <ng-container *ngIf="!loading && institution">
+
+    <!-- Institution heading -->
+    <header class="head">
+      <div>
+        <h1>{{ institution.name }}</h1>
+        <p class="muted">
+          Review institution details, assign officers and record your decision.
+        </p>
+      </div>
+
+      <span class="status">{{ institution.status }}</span>
+    </header>
+
+    <!-- Institution details -->
+    <section class="card">
+      <h2>Institution details</h2>
+
+      <dl class="grid">
+        <div>
+          <dt>Institution name</dt>
+          <dd>{{ institution.name }}</dd>
+        </div>
+
+        <div>
+          <dt>Name on certificate</dt>
+          <dd>{{ institution.nameAsOnCertificate || 'Not provided' }}</dd>
+        </div>
+
+        <div>
+          <dt>UIC</dt>
+          <dd>{{ institution.uic }}</dd>
+        </div>
+
+        <div>
+          <dt>State Department</dt>
+          <dd>{{ institution.stateDepartment }}</dd>
+        </div>
+
+        <div>
+          <dt>Institution type</dt>
+          <dd>{{ institution.institutionType }}</dd>
+        </div>
+
+        <div>
+          <dt>Application type</dt>
+          <dd>{{ institution.applicationType }}</dd>
+        </div>
+
+        <div>
+          <dt>Institution level</dt>
+          <dd>{{ institution.institutionLevel }}</dd>
+        </div>
+
+        <div>
+          <dt>Email</dt>
+          <dd>{{ institution.email }}</dd>
+        </div>
+
+        <div>
+          <dt>Mobile number</dt>
+          <dd>{{ institution.mobileNumber }}</dd>
+        </div>
+
+        <div>
+          <dt>County</dt>
+          <dd>{{ institution.county }}</dd>
+        </div>
+
+        <div>
+          <dt>Sub-county</dt>
+          <dd>{{ institution.subCounty }}</dd>
+        </div>
+
+        <div>
+          <dt>Constituency</dt>
+          <dd>{{ institution.constituency }}</dd>
+        </div>
+
+        <div>
+          <dt>Certificate available</dt>
+          <dd>{{ institution.hasCertificate ? 'Yes' : 'No' }}</dd>
+        </div>
+
+        <div>
+          <dt>Certificate number</dt>
+          <dd>{{ institution.certificateNumber || 'Not provided' }}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <!-- Officer assignment -->
+    <section class="card">
+      <h2>Officer assignment</h2>
+
+      <div *ngFor="let assignment of institution.assignments">
+        <p>
+          <strong>{{ assignment.role }}:</strong>
+          {{ assignment.assignedToName }}
+          <span class="muted">({{ assignment.status }})</span>
+        </p>
+      </div>
+
+      <p *ngIf="institution.assignments.length === 0" class="muted">
+        No officers have been assigned yet.
+      </p>
+
+      <label for="role">Select officer role</label>
+
+      <select
+        id="role"
+        name="role"
+        [(ngModel)]="selectedRole"
+        (ngModelChange)="changeRole()"
+        [disabled]="saving"
+      >
+        <option value="SCDE">SCDE</option>
+        <option value="CQASO">CQASO</option>
+      </select>
+
+      <label for="assignee">Select officer</label>
+
+      <select
+        id="assignee"
+        name="assignee"
+        [(ngModel)]="selectedAssigneeId"
+        [disabled]="saving"
+      >
+        <option value="">Select an officer</option>
+
+        <option *ngFor="let officer of assignees" [value]="officer.id">
+          {{ officer.fullName }}
+        </option>
+      </select>
+
+      <p *ngIf="assignees.length === 0" class="muted">
+        No available officers found for this role.
+      </p>
+
+      <button
+        class="btn"
+        type="button"
+        [disabled]="!selectedAssigneeId || saving"
+        (click)="assignOfficer()"
+      >
+        {{ saving ? 'Saving...' : 'Assign officer' }}
+      </button>
+    </section>
+
+    <!-- Inspection reports -->
+    <section class="card">
+      <h2>Inspection reports</h2>
+
+      <div *ngIf="institution.reports.length > 0; else noReports">
+        <article *ngFor="let report of institution.reports">
+          <h3>{{ report.type }}</h3>
+
+          <p>
+            <strong>Submitted by:</strong>
+            {{ report.authorName }}
+          </p>
+
+          <p>
+            <strong>Summary:</strong>
+            {{ report.summary }}
+          </p>
+
+          <p>
+            <strong>Recommendation:</strong>
+            {{ report.recommendation }}
+          </p>
+
+          <p class="muted">
+            Submitted: {{ report.submittedAt | date:'medium' }}
+          </p>
+
+          <hr />
+        </article>
+      </div>
+
+      <ng-template #noReports>
+        <p class="muted">No inspection reports have been submitted yet.</p>
+      </ng-template>
+    </section>
+
+    <!-- CDE comments -->
+    <section class="card">
+      <h2>Review comments</h2>
+
+      <div *ngFor="let comment of institution.comments">
+        <p><strong>{{ comment.authorName }}</strong></p>
+        <p>{{ comment.text }}</p>
+        <p class="muted">{{ comment.createdAt | date:'medium' }}</p>
+        <hr />
+      </div>
+
+      <p *ngIf="institution.comments.length === 0" class="muted">
+        No comments have been added.
+      </p>
+
+      <label for="comment">Add a comment</label>
+
+      <textarea
+        id="comment"
+        name="comment"
+        rows="4"
+        [(ngModel)]="commentText"
+        [disabled]="saving"
+        placeholder="Enter your review comment..."
+      ></textarea>
+
+      <button
+        class="btn"
+        type="button"
+        [disabled]="!commentText.trim() || saving"
+        (click)="addComment()"
+      >
+        Add comment
+      </button>
+    </section>
+
+    <!-- CDE final decision -->
+    <section class="card">
+      <h2>CDE decision</h2>
+
+      <ng-container *ngIf="institution.decidedAt; else pendingDecision">
+
+        <p>
+          This institution has already received a decision:
+          <strong>{{ institution.status }}</strong>
+        </p>
+
+        <p *ngIf="institution.decisionReason" class="reasons">
+          {{ institution.decisionReason }}
+        </p>
+
+        <p class="muted">
+          Decision date: {{ institution.decidedAt | date:'medium' }}
+        </p>
+
+      </ng-container>
+
+      <ng-template #pendingDecision>
+
+        <p *ngIf="!institution.canDecide" class="muted">
+          This institution is not yet ready for a CDE decision.
+          Please ensure the required officers have submitted their reports.
+        </p>
+
+        <p *ngIf="institution.canDecide" class="muted">
+          The institution is ready for your final decision.
+        </p>
+
+        <label for="decisionReason">
+          Decision reason
+        </label>
+
+        <textarea
+          id="decisionReason"
+          name="decisionReason"
+          rows="4"
+          [(ngModel)]="decisionReason"
+          [disabled]="!institution.canDecide || saving"
+          placeholder="Enter a reason for rejection, or an optional approval comment..."
+        ></textarea>
+
+        <div class="actions">
+
+          <!-- Approve button: reason is optional -->
+          <button
+            class="btn"
+            type="button"
+            [disabled]="!institution.canDecide || saving"
+            (click)="makeDecision(true)"
+          >
+            {{ saving ? 'Processing...' : 'Approve' }}
+          </button>
+
+          <!-- Reject button: reason is compulsory -->
+          <button
+            class="btn danger"
+            type="button"
+            [disabled]="!institution.canDecide || !decisionReason.trim() || saving"
+            (click)="makeDecision(false)"
+          >
+            {{ saving ? 'Processing...' : 'Reject' }}
+          </button>
+
+        </div>
+
+      </ng-template>
+    </section>
+
+  </ng-container>
+
+</div>

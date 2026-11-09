@@ -1,0 +1,29 @@
+
+# Angular
+**/node_modules/
+**/dist/
+**/.angular/
+
+# .NET
+**/bin/
+**/obj/
+
+# Local configuration and secrets
+**/appsettings.Development.json
+**/secrets.json
+**/.env
+
+# Logs
+**/*.log
+**/build-log.txt
+**/run-log.txt
+
+# Uploads and generated files
+KemisOnboarding.Api/uploads/
+
+# IDE
+**/.vs/
+**/.vscode/
+
+# Backup
+kemis-onboarding-ui-backup/

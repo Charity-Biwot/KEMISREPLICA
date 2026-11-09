@@ -1,0 +1,242 @@
+
+<div class="dashboard">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">K</div>
+      <div>
+        <h2>KEMIS</h2>
+        <span>Education Management</span>
+      </div>
+    </div>
+
+    <div class="user-profile">
+      <div class="avatar">SC</div>
+      <div>
+        <strong>{{ userName }}</strong>
+        <span>{{ county || 'Sub County Director' }}</span>
+      </div>
+    </div>
+
+    <nav class="navigation">
+      <p class="nav-heading">MAIN MENU</p>
+
+      <a class="nav-item active" href="javascript:void(0)">
+        <span>▦</span> Dashboard
+      </a>
+
+      <a class="nav-item" href="#institutions">
+        <span>▤</span> Institution Applications
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="footer-icon">●</div>
+      <div>
+        <strong>KEMIS Portal</strong>
+        <span>Education Management</span>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+
+    <header class="topbar">
+      <div>
+        <div class="breadcrumb">Home / SCDE Dashboard</div>
+        <h1>SCDE Dashboard</h1>
+      </div>
+
+      <div class="topbar-actions">
+        <div class="top-user">
+          <div class="avatar small">SC</div>
+          <div>
+            <strong>{{ userName }}</strong>
+            <span>Sub County Director</span>
+          </div>
+        </div>
+
+        <button class="logout-button" (click)="logout()">
+          Logout
+        </button>
+      </div>
+    </header>
+
+    <section class="welcome-section">
+      <div>
+        <h2>Welcome, {{ userName }}</h2>
+        <p>Review institution applications and assign Quality Assurance Officers.</p>
+      </div>
+
+      <button class="refresh-button"
+              (click)="loadInstitutions()"
+              [disabled]="loading">
+        {{ loading ? 'Loading...' : '↻ Refresh' }}
+      </button>
+    </section>
+
+    <section class="institution-section" id="institutions">
+
+      <div class="section-heading">
+        <div>
+          <h2>Assigned Institutions</h2>
+          <p>Institutions assigned to you by the QASO.</p>
+        </div>
+
+        <span class="count-label">
+          {{ institutions.length }} Institutions
+        </span>
+      </div>
+
+      <div class="message error" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <div class="message success" *ngIf="message">
+        {{ message }}
+      </div>
+
+      <div class="loading-state" *ngIf="loading">
+        Loading assigned institutions...
+      </div>
+
+      <div class="empty-state"
+           *ngIf="!loading && !errorMessage && institutions.length === 0">
+        <h3>No assigned institutions</h3>
+        <p>There are currently no institutions assigned to your account.</p>
+      </div>
+
+      <div class="table-container"
+           *ngIf="!loading && institutions.length > 0">
+
+        <table>
+          <thead>
+            <tr>
+              <th>Institution Name</th>
+              <th>UIC</th>
+              <th>County</th>
+              <th>Sub County</th>
+              <th>Application Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let institution of institutions">
+              <td>{{ institution.name }}</td>
+              <td>{{ institution.uic }}</td>
+              <td>{{ institution.county }}</td>
+              <td>{{ institution.subCounty }}</td>
+              <td>
+                {{ institution.approvalStartedAt
+                  ? (institution.approvalStartedAt | date:'mediumDate')
+                  : '—' }}
+              </td>
+              <td>
+                <button class="view-button"
+                        (click)="viewDetails(institution)">
+                  View Details
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </section>
+
+    <section class="details-section" *ngIf="loadingDetails">
+      Loading institution details...
+    </section>
+
+    <section class="details-section"
+             *ngIf="selectedInstitution && !loadingDetails">
+
+      <div class="section-heading">
+        <div>
+          <h2>Institution Details</h2>
+          <p>Review the selected institution's application.</p>
+        </div>
+
+        <button class="close-button" (click)="closeDetails()">
+          Close
+        </button>
+      </div>
+
+      <div class="details-grid">
+        <div>
+          <label>Institution Name</label>
+          <strong>{{ selectedInstitution.name }}</strong>
+        </div>
+
+        <div>
+          <label>UIC</label>
+          <strong>{{ selectedInstitution.uic }}</strong>
+        </div>
+
+        <div>
+          <label>Institution Type</label>
+          <strong>{{ selectedInstitution.institutionType }}</strong>
+        </div>
+
+        <div>
+          <label>Institution Level</label>
+          <strong>{{ selectedInstitution.institutionLevel }}</strong>
+        </div>
+
+        <div>
+          <label>County</label>
+          <strong>{{ selectedInstitution.county }}</strong>
+        </div>
+
+        <div>
+          <label>Sub County</label>
+          <strong>{{ selectedInstitution.subCounty }}</strong>
+        </div>
+
+        <div>
+          <label>Email</label>
+          <strong>{{ selectedInstitution.email }}</strong>
+        </div>
+
+        <div>
+          <label>Mobile Number</label>
+          <strong>{{ selectedInstitution.mobileNumber }}</strong>
+        </div>
+
+        <div>
+          <label>Application Status</label>
+          <strong>{{ selectedInstitution.status }}</strong>
+        </div>
+      </div>
+
+      <div class="assignment-section">
+        <h3>Assign Quality Assurance Officer (QASO)</h3>
+        <p>Select an available QASO to handle this institution.</p>
+
+        <div class="assignment-form">
+          <select [(ngModel)]="selectedQasoId"
+                  [disabled]="assigning">
+            <option value="">Select QASO</option>
+            <option *ngFor="let qaso of qasos"
+                    [value]="qaso.id">
+              {{ qaso.fullName }} — {{ qaso.county || 'County not specified' }}
+            </option>
+          </select>
+
+          <button class="assign-button"
+                  (click)="assignQaso()"
+                  [disabled]="assigning || !selectedQasoId">
+            {{ assigning ? 'Assigning...' : 'Assign QASO' }}
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <footer class="dashboard-footer">
+      KEMIS — Kenya Education Management Information System
+    </footer>
+
+  </main>
+</div>

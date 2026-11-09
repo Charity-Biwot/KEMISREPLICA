@@ -1,0 +1,366 @@
+<div class="onboarding">
+  <div class="layout single">
+    <section class="panel">
+
+      <div class="notice error" *ngIf="serverMessages.length" role="alert">
+        <strong>Something went wrong.</strong>
+        <ul>
+          <li *ngFor="let m of serverMessages">{{ m }}</li>
+        </ul>
+      </div>
+
+      <div class="landing" *ngIf="step === 0">
+        <h1>Kenya Education Management Information System</h1>
+        <p class="hint">Register your institution on KEMIS.</p>
+
+        <button type="button" class="btn primary" (click)="next()">Institution Onboarding</button>
+
+        <div class="resume">
+          <button type="button" class="link" (click)="showResume = !showResume"
+                  [attr.aria-expanded]="showResume">
+            Resume a saved application
+          </button>
+
+          <div class="resume-box" *ngIf="showResume">
+            <div class="field">
+              <label for="resumeId">Application number</label>
+              <input id="resumeId" type="number" min="1" [(ngModel)]="resumeId">
+            </div>
+            <div class="field">
+              <label for="resumeCode">Resume code</label>
+              <input id="resumeCode" type="text" [(ngModel)]="resumeInput" autocomplete="off">
+            </div>
+            <button type="button" class="btn secondary" (click)="resume()">Open application</button>
+            <p class="error" *ngIf="resumeMessage" role="alert">{{ resumeMessage }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="step === 1">
+        <h2>Select the relevant state department</h2>
+
+        <fieldset>
+          <legend class="sr-only">State department</legend>
+          <label class="choice" *ngFor="let d of departments">
+            <input type="radio" name="department" [value]="d.value" [(ngModel)]="form.stateDepartment">
+            <span><strong>{{ d.label }}</strong></span>
+          </label>
+        </fieldset>
+        <p class="error" *ngIf="errors['stateDepartment']">{{ errors['stateDepartment'] }}</p>
+      </div>
+
+      <div *ngIf="step === 2">
+        <h2>Institution registration form</h2>
+        <p class="hint">Fields marked with * are required.</p>
+
+        <div class="grid">
+
+          <div class="field">
+            <label for="institutionType">Institution Type <span class="req">*</span></label>
+            <select id="institutionType" [(ngModel)]="form.institutionType"
+                    [attr.aria-invalid]="!!errors['institutionType']">
+              <option value="">Select institution type</option>
+              <option *ngFor="let t of institutionTypes" [value]="t">{{ t }}</option>
+            </select>
+            <p class="error" *ngIf="errors['institutionType']">{{ errors['institutionType'] }}</p>
+          </div>
+
+          <div class="field">
+            <label for="email">Institution Email <span class="req">*</span></label>
+            <input id="email" type="email" [(ngModel)]="form.email" [attr.aria-invalid]="!!errors['email']">
+            <p class="error" *ngIf="errors['email']">{{ errors['email'] }}</p>
+          </div>
+
+          <div class="field">
+            <label for="mobileNumber">Institution Mobile Number <span class="req">*</span></label>
+            <input id="mobileNumber" type="tel" [(ngModel)]="form.mobileNumber"
+                   [attr.aria-invalid]="!!errors['mobileNumber']">
+            <p class="error" *ngIf="errors['mobileNumber']">{{ errors['mobileNumber'] }}</p>
+          </div>
+
+          <div class="field">
+            <label for="name">Institution Name <span class="req">*</span></label>
+            <input id="name" type="text" [(ngModel)]="form.name" [attr.aria-invalid]="!!errors['name']">
+            <p class="error" *ngIf="errors['name']">{{ errors['name'] }}</p>
+          </div>
+
+          <div class="field">
+            <label for="postalCode">Postal Code</label>
+            <input id="postalCode" type="text" [(ngModel)]="form.postalCode">
+          </div>
+
+          <div class="field">
+            <label for="county">County <span class="req">*</span></label>
+            <input id="county" type="text" [(ngModel)]="form.county" [attr.aria-invalid]="!!errors['county']">
+            <p class="error" *ngIf="errors['county']">{{ errors['county'] }}</p>
+          </div>
+
+          <div class="field">
+            <label for="subCounty">Sub County <span class="req">*</span></label>
+            <input id="subCounty" type="text" [(ngModel)]="form.subCounty" [attr.aria-invalid]="!!errors['subCounty']">
+            <p class="error" *ngIf="errors['subCounty']">{{ errors['subCounty'] }}</p>
+          </div>
+
+          <div class="field">
+            <label for="constituency">Constituency <span class="req">*</span></label>
+            <input id="constituency" type="text" [(ngModel)]="form.constituency"
+                   [attr.aria-invalid]="!!errors['constituency']">
+            <p class="error" *ngIf="errors['constituency']">{{ errors['constituency'] }}</p>
+          </div>
+
+          <div class="field">
+            <label for="postalLocation">Institution Postal Location</label>
+            <input id="postalLocation" type="text" [(ngModel)]="form.postalLocation">
+          </div>
+
+          <div class="field">
+            <label for="institutionLevelName">Institution Level <span class="req">*</span></label>
+            <select id="institutionLevelName" [(ngModel)]="form.institutionLevelName"
+                    [attr.aria-invalid]="!!errors['institutionLevelName']">
+              <option value="">Select institution level</option>
+              <option *ngFor="let n of institutionLevelNames" [value]="n">{{ n }}</option>
+            </select>
+            <p class="error" *ngIf="errors['institutionLevelName']">{{ errors['institutionLevelName'] }}</p>
+          </div>
+
+          <div class="field">
+            <label for="latitude">Coordinates (Map Display): latitude</label>
+            <input id="latitude" type="number" step="any" [(ngModel)]="form.latitude">
+          </div>
+
+          <div class="field">
+            <label for="longitude">Coordinates (Map Display): longitude</label>
+            <input id="longitude" type="number" step="any" [(ngModel)]="form.longitude">
+          </div>
+
+          <div class="field wide">
+            <button type="button" class="btn secondary" (click)="useMyLocation()">Use my current location</button>
+            <p class="error" *ngIf="errors['coordinates']">{{ errors['coordinates'] }}</p>
+          </div>
+
+          <div class="field">
+            <label for="schoolCategories">School Categories</label>
+            <input id="schoolCategories" type="text" [(ngModel)]="form.schoolCategories">
+          </div>
+
+          <div class="field">
+            <label for="accommodationType">Accommodation Type (Day/Boarding/Hybrid) <span class="req">*</span></label>
+            <select id="accommodationType" [(ngModel)]="form.accommodationType"
+                    [attr.aria-invalid]="!!errors['accommodationType']">
+              <option [ngValue]="0">Select accommodation type</option>
+              <option *ngFor="let o of accommodationTypes" [ngValue]="o.value">{{ o.label }}</option>
+            </select>
+            <p class="error" *ngIf="errors['accommodationType']">{{ errors['accommodationType'] }}</p>
+          </div>
+
+          <div class="field wide">
+            <span class="group-label" id="certQuestion">Does the school have a registration certificate? <span class="req">*</span></span>
+            <fieldset aria-labelledby="certQuestion">
+              <label class="choice inline">
+                <input type="radio" name="hasCertificate" [value]="true"
+                       [(ngModel)]="form.hasCertificate" (ngModelChange)="onCertificateAnswerChange()">
+                <span><strong>Yes</strong></span>
+              </label>
+              <label class="choice inline">
+                <input type="radio" name="hasCertificate" [value]="false"
+                       [(ngModel)]="form.hasCertificate" (ngModelChange)="onCertificateAnswerChange()">
+                <span><strong>No</strong></span>
+              </label>
+            </fieldset>
+            <p class="error" *ngIf="errors['hasCertificate']">{{ errors['hasCertificate'] }}</p>
+          </div>
+
+          <div class="field" *ngIf="form.hasCertificate === true">
+            <label for="certificateNumber">Registration Certificate Number <span class="req">*</span></label>
+            <input id="certificateNumber" type="text" [(ngModel)]="form.certificateNumber"
+                   [attr.aria-invalid]="!!errors['certificateNumber']">
+            <p class="error" *ngIf="errors['certificateNumber']">{{ errors['certificateNumber'] }}</p>
+          </div>
+
+          <div class="field" *ngIf="form.hasCertificate === true">
+            <label for="certificateFile">Upload certificate <span class="req">*</span></label>
+            <input id="certificateFile" type="file" accept=".pdf,.jpg,.jpeg,.png"
+                   (change)="onCertificateSelected($event)">
+            <p class="hint small">PDF, JPG or PNG, up to 5 MB.</p>
+            <p class="ok" *ngIf="certificateUploaded && !certificateFile">A certificate is already uploaded. Choose a file only to replace it.</p>
+            <p class="error" *ngIf="errors['certificateFile']">{{ errors['certificateFile'] }}</p>
+          </div>
+
+          <div class="field">
+            <label for="applicationType">Application Type <span class="req">*</span></label>
+            <select id="applicationType" [(ngModel)]="form.applicationType"
+                    [attr.aria-invalid]="!!errors['applicationType']">
+              <option [ngValue]="0">Select application type</option>
+              <option *ngFor="let o of applicationTypes" [ngValue]="o.value">{{ o.label }}</option>
+            </select>
+            <p class="error" *ngIf="errors['applicationType']">{{ errors['applicationType'] }}</p>
+          </div>
+
+          <div class="field">
+            <label for="level">Level <span class="req">*</span></label>
+            <select id="level" [(ngModel)]="form.level" [attr.aria-invalid]="!!errors['level']">
+              <option [ngValue]="0">Select level</option>
+              <option *ngFor="let o of levels" [ngValue]="o.value">{{ o.label }}</option>
+            </select>
+            <p class="error" *ngIf="errors['level']">{{ errors['level'] }}</p>
+          </div>
+
+          <div class="field">
+            <label for="uic">Unique institutional code (UIC) <span class="req">*</span></label>
+            <input id="uic" type="text" [(ngModel)]="form.uic" [attr.aria-invalid]="!!errors['uic']">
+            <p class="error" *ngIf="errors['uic']">{{ errors['uic'] }}</p>
+          </div>
+
+          <div class="field wide" *ngIf="form.hasCertificate === true">
+            <label for="nameAsOnCertificate">School / institutional Name as it appears in the certificate <span class="req">*</span></label>
+            <input id="nameAsOnCertificate" type="text" [(ngModel)]="form.nameAsOnCertificate"
+                   [attr.aria-invalid]="!!errors['nameAsOnCertificate']">
+            <p class="error" *ngIf="errors['nameAsOnCertificate']">{{ errors['nameAsOnCertificate'] }}</p>
+          </div>
+
+        </div>
+
+        <div class="notice info" *ngIf="form.hasCertificate === false">
+          You can continue without a certificate. A quality assurance officer will visit your
+          institution before it can be recommended for onboarding. After the visit, you can
+          register again and upload the certificate.
+        </div>
+      </div>
+
+      <div *ngIf="step === 3">
+        <h2>Review and submit</h2>
+        <p class="hint">Check your details. You can go back to change anything before you submit.</p>
+
+        <!-- CHANGED: shows whenever the application is saved; warns if the code is missing -->
+        <div class="notice info" *ngIf="applicationId && resumeCode">
+          Your application is saved. To finish later, use application number
+          <strong>{{ applicationId }}</strong> and resume code <strong class="code">{{ resumeCode }}</strong>.
+          Write them down, because the code is not shown again.
+        </div>
+        <div class="notice warn" *ngIf="applicationId && !resumeCode" role="alert">
+          Your application is saved as number <strong>{{ applicationId }}</strong>, but the resume code
+          was not received from the server, so this draft cannot be resumed later.
+        </div>
+
+        <div class="summary">
+          <div class="summary-head">
+            <h3>Application details</h3>
+            <button type="button" class="link" (click)="goTo(2)">Change</button>
+          </div>
+          <dl>
+            <dt>State department</dt><dd>{{ label(departments, form.stateDepartment) }}</dd>
+            <dt>Institution Type</dt><dd>{{ form.institutionType }}</dd>
+            <dt>Institution Email</dt><dd>{{ form.email }}</dd>
+            <dt>Institution Mobile Number</dt><dd>{{ form.mobileNumber }}</dd>
+            <dt>Institution Name</dt><dd>{{ form.name }}</dd>
+            <dt>Postal Code</dt><dd>{{ form.postalCode || 'None given' }}</dd>
+            <dt>County</dt><dd>{{ form.county }}</dd>
+            <dt>Sub County</dt><dd>{{ form.subCounty }}</dd>
+            <dt>Constituency</dt><dd>{{ form.constituency }}</dd>
+            <dt>Institution Postal Location</dt><dd>{{ form.postalLocation || 'None given' }}</dd>
+            <dt>Institution Level</dt><dd>{{ form.institutionLevelName }}</dd>
+            <dt>Coordinates</dt>
+            <dd>
+              <span *ngIf="form.latitude !== null && form.longitude !== null; else noCoords">{{ form.latitude }}, {{ form.longitude }}</span>
+              <ng-template #noCoords>None given</ng-template>
+            </dd>
+            <dt>School Categories</dt><dd>{{ form.schoolCategories || 'None given' }}</dd>
+            <dt>Accommodation Type</dt><dd>{{ label(accommodationTypes, form.accommodationType) }}</dd>
+            <dt>Has registration certificate</dt><dd>{{ form.hasCertificate ? 'Yes' : 'No' }}</dd>
+            <ng-container *ngIf="form.hasCertificate">
+              <dt>Registration Certificate Number</dt><dd>{{ form.certificateNumber }}</dd>
+              <dt>Certificate file</dt><dd>{{ certificateUploaded ? 'Uploaded' : 'Not uploaded' }}</dd>
+            </ng-container>
+            <dt>Application Type</dt><dd>{{ label(applicationTypes, form.applicationType) }}</dd>
+            <dt>Level</dt><dd>{{ label(levels, form.level) }}</dd>
+            <dt>Unique institutional code (UIC)</dt><dd>{{ form.uic }}</dd>
+            <ng-container *ngIf="form.hasCertificate">
+              <dt>Name as it appears in the certificate</dt><dd>{{ form.nameAsOnCertificate }}</dd>
+            </ng-container>
+          </dl>
+        </div>
+
+        <div class="notice warn" *ngIf="duplicates.length" role="alert">
+          <strong>These institutions look similar to yours.</strong>
+          <p>Check that you are not registering the same institution twice.</p>
+          <ul class="matches">
+            <li *ngFor="let d of duplicates">
+              <strong>{{ d.name }}</strong> ({{ d.uic }}), {{ d.subCounty }}, {{ d.county }}
+              <span class="reason">{{ d.reason }}</span>
+            </li>
+          </ul>
+          <label class="confirm">
+            <input type="checkbox" [(ngModel)]="acknowledged">
+            <span>I have reviewed these institutions and I want to continue.</span>
+          </label>
+        </div>
+      </div>
+
+      <div *ngIf="step === 4">
+        <h2>Application fee payment</h2>
+        <p class="hint">Your application has been submitted. Complete payment to start the approval process.</p>
+
+        <dl class="fee">
+          <dt>Application number</dt><dd>{{ applicationId }}</dd>
+          <dt>Institution</dt><dd>{{ form.name }}</dd>
+          <dt>Amount to pay</dt><dd><strong>KES {{ applicationFee | number:'1.2-2' }}</strong></dd>
+          <dt>Payment method</dt><dd>eCitizen / Pesaflow</dd>
+        </dl>
+
+        <div class="notice info">
+          The amount is set by the Ministry of Education and is KES 0.00 until it is confirmed.
+          Payment is simulated in this version.
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn primary" (click)="pay()" [disabled]="paying">
+            {{ paying ? 'Processing...' : (applicationFee === 0 ? 'Continue (no fee)' : 'Pay with eCitizen / Pesaflow') }}
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="step === 5">
+        <h2>Registration complete</h2>
+
+        <ul class="checks">
+          <li>
+            <strong>Payment confirmed</strong>
+            <span>Reference {{ paymentReference }}, KES {{ applicationFee | number:'1.2-2' }}</span>
+          </li>
+          <li>
+            <strong>Registration confirmed</strong>
+            <span>Application number {{ applicationId }}, institutional code {{ form.uic }}</span>
+          </li>
+          <li>
+            <strong>Approval process started</strong>
+            <span>Your application is now with the Sub-County Director of Education for review.</span>
+          </li>
+        </ul>
+
+        <!-- CHANGED: number and code repeated on the final screen -->
+        <div class="notice info" *ngIf="applicationId && resumeCode">
+          Keep these to check on your application later: application number
+          <strong>{{ applicationId }}</strong> and resume code <strong class="code">{{ resumeCode }}</strong>.
+        </div>
+        <p class="hint" *ngIf="!resumeCode">Keep your application number to check on your application later.</p>
+      </div>
+
+      <div class="actions" *ngIf="step >= 1 && step <= 3">
+        <button type="button" class="btn secondary" (click)="back()">Back</button>
+
+        <button type="button" class="btn primary" (click)="next()" *ngIf="step === 1">Proceed to institution onboarding</button>
+
+        <!-- CHANGED: the button now has a label -->
+        <button type="button" class="btn primary" (click)="next()" *ngIf="step === 2" [disabled]="saving">
+          {{ saving ? 'Saving...' : 'Save and continue' }}
+        </button>
+
+        <button type="button" class="btn primary" (click)="submit()" *ngIf="step === 3"
+                [disabled]="submitting || (duplicates.length > 0 && !acknowledged)">
+          {{ submitting ? 'Submitting...' : 'Submit application' }}
+        </button>
+      </div>
+
+    </section>
+  </div>
+</div>

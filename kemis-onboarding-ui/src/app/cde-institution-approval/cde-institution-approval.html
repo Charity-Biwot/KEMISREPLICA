@@ -1,0 +1,243 @@
+<div class="approval-page">
+
+  <!-- Page heading -->
+  <div class="page-heading">
+    <h1>Institution Approval</h1>
+  </div>
+
+  <!-- Filters -->
+  <section class="filter-section">
+
+    <div class="onboarding-filter">
+      <strong>Select Onboarding Type:</strong>
+
+      <label>
+        <input
+          type="radio"
+          name="onboardingType"
+          value="New Onboarding"
+          [(ngModel)]="onboardingType">
+        New Onboarding
+      </label>
+    </div>
+
+    <div class="filter-row">
+
+      <div class="filter-group">
+        <label for="subCounty">Sub County:</label>
+
+        <select
+          id="subCounty"
+          [(ngModel)]="selectedSubCounty">
+
+          <option value="All">All</option>
+
+          <option
+            *ngFor="let subCounty of subCounties"
+            [value]="subCounty"
+            [disabled]="subCounty === 'All'">
+            {{ subCounty }}
+          </option>
+
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="status">Status:</label>
+
+        <select
+          id="status"
+          [(ngModel)]="selectedStatus">
+
+          <option value="Pending">Pending</option>
+          <option value="Approved">Approved</option>
+          <option value="Rejected">Rejected</option>
+
+        </select>
+      </div>
+
+    </div>
+
+    <div class="search-row">
+      <input
+        type="search"
+        placeholder="Search"
+        aria-label="Search institutions"
+        [(ngModel)]="searchTerm">
+    </div>
+
+  </section>
+
+  <!-- Error message -->
+  <div class="message error-message" *ngIf="error" role="alert">
+    {{ error }}
+  </div>
+
+  <!-- Success toast (top right, like real KEMIS) -->
+  <div class="toast" *ngIf="successMessage" role="status" aria-live="polite">
+    <svg class="toast-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+      <path d="M4 12.5l5 5L20 6.5" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="toast-text">{{ successMessage }}</span>
+    <button type="button" class="toast-close" aria-label="Close" (click)="dismissToast()">×</button>
+    <span class="toast-progress"></span>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-message" *ngIf="loading">
+    Loading institution applications...
+  </div>
+
+  <!-- Institution table -->
+  <section class="table-section" *ngIf="!loading">
+
+    <div class="table-scroll">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>S No.</th>
+            <th>Institution No.</th>
+            <th>Institution Name</th>
+            <th>Date of Onboarding</th>
+            <th>Subcounty</th>
+            <th>Status</th>
+            <th>Assign SCDE</th>
+            <th>Assign CQASO</th>
+            <th>View Details</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <tr
+            *ngFor="let institution of filteredInstitutions; let i = index; trackBy: trackById">
+
+            <td>{{ i + 1 }}</td>
+
+            <td>{{ institution.uic }}</td>
+
+            <td>{{ institution.name }}</td>
+
+            <td>{{ formatDate(institution.approvalStartedAt) }}</td>
+
+            <td>{{ institution.subCounty || '—' }}</td>
+
+            <td>
+              <span class="status-chip" [ngClass]="statusOf(institution).toLowerCase()">
+                {{ statusOf(institution) }}
+              </span>
+            </td>
+
+            <!-- SCDE assignment -->
+            <td>
+              <button
+                type="button"
+                class="assign-button"
+                (click)="openAssign(institution, 'SCDE')">
+                Assign SCDE
+              </button>
+            </td>
+
+            <!-- CQASO assignment (greyed until an SCDE is assigned, like real KEMIS) -->
+            <td>
+              <button
+                type="button"
+                class="assign-button muted"
+                [disabled]="!institution.scdeAssigned"
+                (click)="openAssign(institution, 'CQASO')">
+                Assign
+              </button>
+            </td>
+
+            <!-- Institution details -->
+            <td>
+              <button
+                type="button"
+                class="view-button"
+                (click)="viewDetails(institution.id)">
+                <svg class="eye-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                  <path fill="#dc3545" d="M12 5C6.5 5 2.1 8.6 1 12c1.1 3.4 5.5 7 11 7s9.9-3.6 11-7c-1.1-3.4-5.5-7-11-7z"/>
+                  <circle cx="12" cy="12" r="4.2" fill="#fff"/>
+                  <circle cx="12" cy="12" r="2.2" fill="#dc3545"/>
+                </svg>
+                View
+              </button>
+            </td>
+
+          </tr>
+
+          <!-- Empty state -->
+          <tr *ngIf="filteredInstitutions.length === 0">
+            <td colspan="9" class="empty-state">
+              No institution applications found.
+            </td>
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    <div class="table-footer">
+      Showing {{ filteredInstitutions.length }} of
+      {{ institutions.length }} institutions
+    </div>
+
+  </section>
+
+  <!-- Assign popup -->
+  <div class="popup-backdrop" *ngIf="popupOpen" (click)="closePopup()">
+    <div
+      class="popup"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="popupTitle"
+      (click)="$event.stopPropagation()">
+
+      <div class="popup-header">
+        <h3 id="popupTitle">Assign {{ popupRole }}</h3>
+
+        <button
+          type="button"
+          class="popup-x"
+          aria-label="Close"
+          [disabled]="saving"
+          (click)="closePopup()">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+            <path d="M4 4l16 16M20 4L4 20" fill="none" stroke="#2b2b2b" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="popup-body">
+        <label for="popupOfficer">{{ popupRole }}</label>
+
+        <select id="popupOfficer" [(ngModel)]="popupOfficerId">
+          <option value=""></option>
+          <option *ngFor="let officer of popupOfficers" [value]="officer.id">
+            {{ officer.fullName }}
+          </option>
+        </select>
+
+        <p class="popup-error" *ngIf="popupError" role="alert">
+          {{ popupError }}
+        </p>
+      </div>
+
+      <div class="popup-footer">
+        <button type="button" class="popup-close" [disabled]="saving" (click)="closePopup()">
+          Close
+        </button>
+
+        <button type="button" class="popup-submit" [disabled]="saving" (click)="submitAssign()">
+          {{ saving ? 'Submitting...' : 'Submit' }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div>
