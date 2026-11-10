@@ -65,7 +65,9 @@
     <section class="welcome-section">
       <div>
         <h2>Welcome, {{ userName }}</h2>
-        <p>Review institution applications and assign Quality Assurance Officers.</p>
+        <p>
+          Review institution applications and assign Quality Assurance Officers.
+        </p>
       </div>
 
       <button class="refresh-button"
@@ -80,7 +82,7 @@
       <div class="section-heading">
         <div>
           <h2>Assigned Institutions</h2>
-          <p>Institutions assigned to you by the QASO.</p>
+          <p>Institutions assigned to you by the CDE.</p>
         </div>
 
         <span class="count-label">
@@ -132,10 +134,31 @@
                   ? (institution.approvalStartedAt | date:'mediumDate')
                   : '—' }}
               </td>
+
               <td>
-                <button class="view-button"
-                        (click)="viewDetails(institution)">
-                  View Details
+                <button
+                  type="button"
+                  class="view-button"
+                  title="View institution details"
+                  aria-label="View institution details"
+                  (click)="viewDetails(institution)">
+
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="21"
+                    height="21"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round">
+
+                    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/>
+                    <circle cx="12" cy="12" r="3"/>
+
+                  </svg>
+
                 </button>
               </td>
             </tr>
@@ -143,95 +166,6 @@
         </table>
 
       </div>
-    </section>
-
-    <section class="details-section" *ngIf="loadingDetails">
-      Loading institution details...
-    </section>
-
-    <section class="details-section"
-             *ngIf="selectedInstitution && !loadingDetails">
-
-      <div class="section-heading">
-        <div>
-          <h2>Institution Details</h2>
-          <p>Review the selected institution's application.</p>
-        </div>
-
-        <button class="close-button" (click)="closeDetails()">
-          Close
-        </button>
-      </div>
-
-      <div class="details-grid">
-        <div>
-          <label>Institution Name</label>
-          <strong>{{ selectedInstitution.name }}</strong>
-        </div>
-
-        <div>
-          <label>UIC</label>
-          <strong>{{ selectedInstitution.uic }}</strong>
-        </div>
-
-        <div>
-          <label>Institution Type</label>
-          <strong>{{ selectedInstitution.institutionType }}</strong>
-        </div>
-
-        <div>
-          <label>Institution Level</label>
-          <strong>{{ selectedInstitution.institutionLevel }}</strong>
-        </div>
-
-        <div>
-          <label>County</label>
-          <strong>{{ selectedInstitution.county }}</strong>
-        </div>
-
-        <div>
-          <label>Sub County</label>
-          <strong>{{ selectedInstitution.subCounty }}</strong>
-        </div>
-
-        <div>
-          <label>Email</label>
-          <strong>{{ selectedInstitution.email }}</strong>
-        </div>
-
-        <div>
-          <label>Mobile Number</label>
-          <strong>{{ selectedInstitution.mobileNumber }}</strong>
-        </div>
-
-        <div>
-          <label>Application Status</label>
-          <strong>{{ selectedInstitution.status }}</strong>
-        </div>
-      </div>
-
-      <div class="assignment-section">
-        <h3>Assign Quality Assurance Officer (QASO)</h3>
-        <p>Select an available QASO to handle this institution.</p>
-
-        <div class="assignment-form">
-          <select [(ngModel)]="selectedQasoId"
-                  [disabled]="assigning">
-            <option value="">Select QASO</option>
-            <option *ngFor="let qaso of qasos"
-                    [value]="qaso.id">
-              {{ qaso.fullName }} — {{ qaso.county || 'County not specified' }}
-            </option>
-          </select>
-
-          <button class="assign-button"
-                  (click)="assignQaso()"
-                  [disabled]="assigning || !selectedQasoId">
-            {{ assigning ? 'Assigning...' : 'Assign QASO' }}
-          </button>
-        </div>
-      </div>
-
     </section>
 
     <footer class="dashboard-footer">

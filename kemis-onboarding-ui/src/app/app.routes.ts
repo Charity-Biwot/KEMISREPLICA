@@ -48,7 +48,7 @@ export const routes: Routes = [
     canActivate: [cdeGuard]
   },
 
-  // Existing CDE shell and routes
+  // Existing CDE shared shell
   {
     path: '',
     component: CdeShell,

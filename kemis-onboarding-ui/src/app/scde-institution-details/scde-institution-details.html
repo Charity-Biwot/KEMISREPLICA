@@ -1,0 +1,349 @@
+
+<div class="details-page">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <div class="brand">
+      <h2>KEMIS</h2>
+      <span>Education Management</span>
+    </div>
+
+    <div class="user-profile">
+      <div class="avatar">SC</div>
+      <div>
+        <strong>SCDE</strong>
+        <small>Sub County Director</small>
+      </div>
+    </div>
+
+    <nav>
+      <a (click)="goBack()">Dashboard</a>
+      <a class="active">Institution Details</a>
+    </nav>
+
+    <button class="logout-button" (click)="logout()">
+      Logout
+    </button>
+
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <header class="topbar">
+
+      <div>
+        <h2>Institution Details</h2>
+        <p>Review institution information and manage QASO assignment.</p>
+      </div>
+
+      <button class="back-button" (click)="goBack()">
+        Back to Dashboard
+      </button>
+
+    </header>
+
+    <!-- LOADING -->
+    <div *ngIf="loading" class="message">
+      Loading institution details...
+    </div>
+
+    <!-- ERROR -->
+    <div *ngIf="!loading && errorMessage" class="alert error">
+      {{ errorMessage }}
+    </div>
+
+    <!-- SUCCESS -->
+    <div *ngIf="successMessage" class="alert success">
+      {{ successMessage }}
+    </div>
+
+    <!-- INSTITUTION DETAILS -->
+    <ng-container *ngIf="!loading && institution as inst">
+
+      <!-- INSTITUTION INFORMATION -->
+      <section class="institution-card">
+
+        <div class="section-heading">
+
+          <div>
+            <h3>{{ inst.name }}</h3>
+            <p>Institution registration information</p>
+          </div>
+
+          <span class="status">
+            {{ inst.status }}
+          </span>
+
+        </div>
+
+        <div class="details-grid">
+
+          <div class="detail-item">
+            <label>Institution Name</label>
+            <strong>{{ inst.name }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>UIC</label>
+            <strong>{{ inst.uic }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Name on Certificate</label>
+            <strong>{{ inst.nameAsOnCertificate || 'Not provided' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Institution Type</label>
+            <strong>{{ inst.institutionType }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Institution Level</label>
+            <strong>{{ inst.institutionLevel }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Application Type</label>
+            <strong>{{ inst.applicationType }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>State Department</label>
+            <strong>{{ inst.stateDepartment }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Email</label>
+            <strong>{{ inst.email }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Mobile Number</label>
+            <strong>{{ inst.mobileNumber }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>County</label>
+            <strong>{{ inst.county }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Sub County</label>
+            <strong>{{ inst.subCounty }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Constituency</label>
+            <strong>{{ inst.constituency }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Latitude</label>
+            <strong>{{ inst.latitude ?? 'Not provided' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Longitude</label>
+            <strong>{{ inst.longitude ?? 'Not provided' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Certificate Available</label>
+            <strong>{{ inst.hasCertificate ? 'Yes' : 'No' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Certificate Number</label>
+            <strong>{{ inst.certificateNumber || 'Not provided' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Application Date</label>
+            <strong>
+              {{ inst.approvalStartedAt
+                ? (inst.approvalStartedAt | date:'medium')
+                : 'Not available' }}
+            </strong>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- QASO ASSIGNMENT -->
+      <section class="institution-card">
+
+        <div class="section-heading">
+
+          <div>
+            <h3>QASO Assignment</h3>
+            <p>
+              Assign a Quality Assurance and Standards Officer
+              to inspect this institution.
+            </p>
+          </div>
+
+        </div>
+
+        <div *ngIf="assignedQaso" class="alert success">
+          A QASO has already been assigned to this institution.
+        </div>
+
+        <div *ngIf="!assignedQaso" class="assignment-form">
+
+          <div *ngIf="loadingQasos" class="message">
+            Loading available QASO officers...
+          </div>
+
+          <ng-container *ngIf="!loadingQasos">
+
+            <div class="form-group">
+
+              <label for="qaso">Select QASO Officer</label>
+
+              <select
+                id="qaso"
+                name="qaso"
+                [(ngModel)]="selectedQasoId"
+                [disabled]="assigning">
+
+                <option value="">-- Select QASO --</option>
+
+                <option
+                  *ngFor="let qaso of qasos"
+                  [value]="qaso.id">
+
+                  {{ qaso.fullName }} -
+                  {{ qaso.county || 'County not specified' }}
+
+                </option>
+
+              </select>
+
+            </div>
+
+            <button
+              class="assign-button"
+              (click)="assignQaso()"
+              [disabled]="!selectedQasoId || assigning">
+
+              {{ assigning ? 'Assigning...' : 'Assign QASO' }}
+
+            </button>
+
+            <p *ngIf="qasos.length === 0" class="empty-message">
+              No QASO officers are currently available.
+            </p>
+
+          </ng-container>
+
+        </div>
+
+        <!-- ASSIGNMENT HISTORY -->
+        <div
+          *ngIf="inst.assignments && inst.assignments.length > 0"
+          class="assignment-list">
+
+          <h4>Assignment History</h4>
+
+          <div
+            *ngFor="let assignment of inst.assignments"
+            class="assignment-row">
+
+            <div>
+              <strong>{{ assignment.assignedToName }}</strong>
+
+              <small>
+                {{ assignment.role }} · {{ assignment.status }}
+              </small>
+            </div>
+
+            <small>
+              {{ assignment.assignedAt | date:'medium' }}
+            </small>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- INSPECTION REPORTS -->
+      <section class="institution-card">
+
+        <h3>Inspection Reports</h3>
+
+        <div
+          *ngIf="!inst.reports || inst.reports.length === 0"
+          class="empty-message">
+
+          No inspection reports have been submitted
+          for this institution yet.
+
+        </div>
+
+        <div
+          *ngFor="let report of inst.reports"
+          class="report-row">
+
+          <div>
+            <strong>{{ report.type }}</strong>
+            <p>{{ report.summary }}</p>
+            <small>Submitted by: {{ report.authorName }}</small>
+          </div>
+
+          <div class="report-recommendation">
+            <strong>{{ report.recommendation }}</strong>
+            <small>{{ report.submittedAt | date:'medium' }}</small>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- COMMENTS -->
+      <section class="institution-card">
+
+        <h3>Comments and Remarks</h3>
+
+        <div
+          *ngIf="!inst.comments || inst.comments.length === 0"
+          class="empty-message">
+
+          No comments have been submitted yet.
+
+        </div>
+
+        <div
+          *ngFor="let comment of inst.comments"
+          class="comment-row">
+
+          <strong>{{ comment.authorName }}</strong>
+
+          <p>{{ comment.text }}</p>
+
+          <small>
+            {{ comment.createdAt | date:'medium' }}
+          </small>
+
+        </div>
+
+      </section>
+
+    </ng-container>
+
+    <!-- NO DATA FALLBACK -->
+    <div
+      *ngIf="!loading && !institution && !errorMessage"
+      class="message">
+
+      Institution information is not available.
+
+    </div>
+
+  </main>
+
+</div>

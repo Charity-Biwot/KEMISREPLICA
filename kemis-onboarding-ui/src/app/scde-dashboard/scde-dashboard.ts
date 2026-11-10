@@ -118,68 +118,29 @@ export class ScdeDashboard implements OnInit {
     });
   }
 
+  // Navigate to the separate institution details page.
   viewDetails(institution: PendingInstitution): void {
 
-    this.loadingDetails = true;
-    this.errorMessage = '';
-    this.message = '';
+    this.router.navigate([
+      '/scde-institution-details',
+      institution.id
+    ]);
 
-    this.selectedInstitution = null;
-    this.selectedQasoId = '';
-    this.qasos = [];
-
-    this.cdr.detectChanges();
-
-    this.scdeService
-      .getInstitutionDetails(institution.id)
-      .subscribe({
-
-        next: (data) => {
-
-          this.selectedInstitution = data;
-          this.loadingDetails = false;
-
-          this.loadQasos();
-
-          this.cdr.detectChanges();
-        },
-
-        error: (error) => {
-
-          console.error(
-            'Error loading institution details:',
-            error
-          );
-
-          this.errorMessage =
-            'Unable to load institution details.';
-
-          this.loadingDetails = false;
-
-          this.cdr.detectChanges();
-        }
-
-      });
   }
 
+  // Retained for compatibility with the existing dashboard template.
   loadQasos(): void {
 
     this.scdeService.getQasos().subscribe({
 
       next: (data) => {
-
         this.qasos = data;
-
         this.cdr.detectChanges();
       },
 
       error: (error) => {
-
         console.error('Error loading QASOs:', error);
-
-        this.errorMessage =
-          'Unable to load available QASOs.';
-
+        this.errorMessage = 'Unable to load available QASOs.';
         this.cdr.detectChanges();
       }
 
@@ -189,11 +150,8 @@ export class ScdeDashboard implements OnInit {
   assignQaso(): void {
 
     if (!this.selectedInstitution || !this.selectedQasoId) {
-
       this.errorMessage = 'Please select a QASO.';
-
       this.cdr.detectChanges();
-
       return;
     }
 
@@ -212,27 +170,19 @@ export class ScdeDashboard implements OnInit {
     ).subscribe({
 
       next: (data) => {
-
         this.selectedInstitution = data;
         this.selectedQasoId = '';
         this.assigning = false;
-
         this.message = 'QASO assigned successfully.';
-
         this.loadInstitutions();
-
         this.cdr.detectChanges();
       },
 
       error: (error) => {
-
         console.error('Error assigning QASO:', error);
-
         this.errorMessage =
           error.error?.message || 'Unable to assign QASO.';
-
         this.assigning = false;
-
         this.cdr.detectChanges();
       }
 
@@ -240,20 +190,15 @@ export class ScdeDashboard implements OnInit {
   }
 
   closeDetails(): void {
-
     this.selectedInstitution = null;
     this.selectedQasoId = '';
-
     this.message = '';
     this.errorMessage = '';
-
     this.cdr.detectChanges();
   }
 
   logout(): void {
-
     this.authService.logout();
-
     this.router.navigate(['/login']);
   }
 
