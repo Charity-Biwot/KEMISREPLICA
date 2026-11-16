@@ -1,0 +1,501 @@
+:host {
+  display: block;
+  width: 100%;
+  min-height: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #172033;
+}
+
+.approval-page {
+  width: 100%;
+  min-height: calc(100vh - 90px);
+  background: #f7f7f7;
+  padding: 0 16px 30px;
+  box-sizing: border-box;
+}
+
+/* Page heading */
+.page-heading {
+  background: #fff;
+  border-bottom: 3px solid #c9effb;
+  padding: 12px 16px 9px;
+  margin-bottom: 0;
+
+  h1 {
+    color: #00a9e9;
+    font-size: 23px;
+    font-weight: 600;
+    margin: 0;
+  }
+}
+
+/* Filter section */
+.filter-section {
+  background: #fff;
+  padding: 20px 16px 17px;
+}
+
+.onboarding-filter {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 29px;
+  font-size: 15px;
+
+  strong {
+    font-weight: 600;
+  }
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+
+  input[type='radio'] {
+    width: 16px;
+    height: 16px;
+    accent-color: #087ff5;
+    cursor: pointer;
+  }
+}
+
+.filter-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  label {
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  select {
+    width: 100%;
+    height: 39px;
+    padding: 0 12px;
+    border: 1px solid #d9e0e8;
+    border-radius: 9px;
+    background: #fff;
+    color: #172033;
+    font-size: 15px;
+    outline: none;
+
+    &:focus {
+      border-color: #00a9e9;
+      box-shadow: 0 0 0 2px rgba(0, 169, 233, 0.12);
+    }
+  }
+}
+
+/* Search */
+.search-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+
+  input {
+    width: 232px;
+    height: 38px;
+    padding: 0 12px;
+    border: 1px solid #d9e0e8;
+    border-radius: 9px;
+    background: #fff;
+    font-size: 15px;
+    outline: none;
+
+    &::placeholder {
+      color: #a8b0bc;
+    }
+
+    &:focus {
+      border-color: #00a9e9;
+    }
+  }
+}
+
+/* Messages */
+.message {
+  padding: 11px 14px;
+  margin: 10px 0;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.error-message {
+  background: #fff0f0;
+  color: #b42318;
+}
+
+.loading-message {
+  padding: 25px;
+  text-align: center;
+  background: #fff;
+  color: #64748b;
+}
+
+/* Institution table */
+.table-section {
+  background: #fff;
+  padding: 0 16px 16px;
+}
+
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+table {
+  width: 100%;
+  min-width: 1250px;
+  border-collapse: collapse;
+  table-layout: auto;
+  font-size: 14px;
+
+  thead {
+    th {
+      background: #00a9e9;
+      color: #fff;
+      text-align: left;
+      padding: 7px 6px;
+      font-size: 14px;
+      font-weight: 600;
+      white-space: nowrap;
+      border-right: 1px solid #fff;
+      border-radius: 9px 9px 0 0;
+    }
+  }
+
+  tbody {
+    tr:nth-child(odd) {
+      background: #f8f8fc;
+    }
+
+    tr:nth-child(even) {
+      background: #fff;
+    }
+
+    td {
+      padding: 8px 7px;
+      border: 1px solid #303030;
+      color: #172033;
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+  }
+}
+
+/* Status chips (gold Pending, like real KEMIS) */
+.status-chip {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: #ffc107;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.status-chip.approved {
+  background: #def5e5;
+  color: #17652f;
+}
+
+.status-chip.rejected {
+  background: #fdecea;
+  color: #a12a1f;
+}
+
+/* Assign SCDE: grey outlined */
+.assign-button {
+  min-width: 102px;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid #6c757d;
+  border-radius: 4px;
+  background: #fff;
+  color: #6c757d;
+  font-size: 14px;
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: #f1f3f5;
+  }
+}
+
+/* Assign CQASO: light grey "Assign" until active */
+.assign-button.muted {
+  min-width: 74px;
+  border-color: #ced4da;
+  color: #adb5bd;
+
+  &:not(:disabled) {
+    border-color: #6c757d;
+    color: #6c757d;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+/* View: red outlined with eye icon */
+.view-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 14px;
+  border: 1px solid #dc3545;
+  border-radius: 4px;
+  background: #fff;
+  color: #dc3545;
+  font-size: 15px;
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:hover {
+    background: #fdecee;
+  }
+}
+
+/* Empty state and footer */
+.empty-state {
+  padding: 25px !important;
+  text-align: center;
+  color: #64748b !important;
+}
+
+.table-footer {
+  padding: 12px 4px;
+  color: #64748b;
+  font-size: 13px;
+}
+
+/* Assign popup (matches real KEMIS) */
+.popup-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 28px 16px;
+  overflow-y: auto;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.popup {
+  width: 500px;
+  max-width: 100%;
+  background: #fff;
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+  font-family: inherit;
+}
+
+.popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 20px;
+  background: #00aeef;
+
+  h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 500;
+    color: #fff;
+  }
+}
+
+.popup-x {
+  display: flex;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.popup-body {
+  padding: 16px 16px 18px;
+
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #333;
+  }
+
+  select {
+    width: 100%;
+    height: 38px;
+    box-sizing: border-box;
+    padding: 0 36px 0 12px;
+    font: inherit;
+    font-size: 15px;
+    color: #333;
+    background-color: #fff;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1.5l5 5 5-5' fill='none' stroke='%23333' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    border: 1px solid #ced4da;
+    border-radius: 10px;
+    appearance: none;
+  }
+
+  select:focus {
+    outline: none;
+    border-color: #adb5bd;
+    box-shadow: 0 0 0 2px rgba(108, 117, 125, 0.2);
+  }
+}
+
+.popup-error {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: #dc3545;
+}
+
+.popup-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 16px;
+  border-top: 1px solid #dee2e6;
+}
+
+.popup-close,
+.popup-submit {
+  height: 38px;
+  padding: 0 14px;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  border: 1px solid #dc3545;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.popup-close {
+  background: #dc3545;
+  color: #fff;
+}
+
+.popup-close:hover:not(:disabled) {
+  background: #bb2d3b;
+}
+
+.popup-submit {
+  background: #fff;
+  color: #dc3545;
+}
+
+.popup-submit:hover:not(:disabled) {
+  background: #dc3545;
+  color: #fff;
+}
+
+.popup-close:disabled,
+.popup-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Success toast (matches real KEMIS) */
+.toast {
+  position: fixed;
+  top: 14px;
+  right: 22px;
+  z-index: 2000;
+  width: 300px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 17px 16px 17px 22px;
+  background: #51a351;
+  color: #fff;
+  border-radius: 3px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+
+.toast-icon {
+  flex: 0 0 auto;
+}
+
+.toast-text {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.toast-close {
+  flex: 0 0 auto;
+  background: none;
+  border: 0;
+  padding: 0;
+  color: #fff;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+  opacity: 0.85;
+  cursor: pointer;
+}
+
+.toast-close:hover {
+  opacity: 1;
+}
+
+.toast-progress {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 4px;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  animation: toast-countdown 4s linear forwards;
+}
+
+@keyframes toast-countdown {
+  from { width: 100%; }
+  to { width: 0; }
+}
+
+/* Responsive layout */
+@media (max-width: 768px) {
+  .approval-page {
+    padding: 0 8px 20px;
+  }
+
+  .filter-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .onboarding-filter {
+    margin-bottom: 20px;
+  }
+
+  .search-row input {
+    width: 100%;
+  }
+
+  .page-heading h1 {
+    font-size: 20px;
+  }
+}

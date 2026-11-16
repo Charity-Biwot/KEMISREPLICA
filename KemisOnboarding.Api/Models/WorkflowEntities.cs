@@ -1,3 +1,4 @@
+
 namespace KemisOnboarding.Api.Models;
 
 public class InstitutionAssignment
@@ -27,6 +28,10 @@ public class InspectionReport
     public Guid AuthorUserId { get; set; }
     public ReportType Type { get; set; }
     public string Summary { get; set; } = string.Empty;
+
+    // Findings recorded by the inspecting officer.
+    public string? Findings { get; set; }
+
     public ReportRecommendation Recommendation { get; set; }
     public string? FileKey { get; set; }
     public DateTime SubmittedAt { get; set; } = DateTime.UtcNow;

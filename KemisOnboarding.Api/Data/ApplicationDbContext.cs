@@ -1,3 +1,4 @@
+
 using Microsoft.EntityFrameworkCore;
 using KemisOnboarding.Api.Models;
 
@@ -5,17 +6,21 @@ namespace KemisOnboarding.Api.Data;
 
 public class ApplicationDbContext : DbContext
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : base(options)
     {
     }
 
     public DbSet<Institution> Institutions => Set<Institution>();
     public DbSet<AppUser> Users => Set<AppUser>();
-
     public DbSet<InstitutionAssignment> InstitutionAssignments => Set<InstitutionAssignment>();
     public DbSet<InspectionReport> InspectionReports => Set<InspectionReport>();
     public DbSet<ReviewComment> ReviewComments => Set<ReviewComment>();
     public DbSet<Notification> Notifications => Set<Notification>();
+
+    // QASO inspection records and supporting evidence
+    public DbSet<QasoInspection> QasoInspections => Set<QasoInspection>();
+    public DbSet<InspectionEvidence> InspectionEvidence => Set<InspectionEvidence>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -67,6 +72,29 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<Notification>(e =>
         {
             e.HasIndex(n => new { n.RecipientUserId, n.IsRead });
+        });
+
+        // QASO inspection: one inspection record per QASO assignment
+        modelBuilder.Entity<QasoInspection>(e =>
+        {
+            e.HasOne(q => q.Assignment)
+                .WithOne()
+                .HasForeignKey<QasoInspection>(q => q.AssignmentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            e.HasIndex(q => q.AssignmentId)
+                .IsUnique();
+        });
+
+        // Multiple evidence files can belong to one QASO inspection
+        modelBuilder.Entity<InspectionEvidence>(e =>
+        {
+            e.HasOne(evidence => evidence.QasoInspection)
+                .WithMany(inspection => inspection.EvidenceFiles)
+                .HasForeignKey(evidence => evidence.QasoInspectionId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            e.HasIndex(evidence => evidence.QasoInspectionId);
         });
     }
 }

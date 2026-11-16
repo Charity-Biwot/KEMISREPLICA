@@ -1,0 +1,140 @@
+
+<div class="approved-page">
+
+  <!-- Page heading -->
+  <div class="page-header">
+    <div>
+      <h2>Approved Institutions</h2>
+      <p>View institutions that have received final CDE approval.</p>
+    </div>
+
+    <button
+      type="button"
+      class="back-button"
+      (click)="goBack()">
+      Back to Dashboard
+    </button>
+  </div>
+
+  <!-- Summary -->
+  <div class="summary-card">
+    <div>
+      <span class="summary-label">Approved Institutions</span>
+      <h3>{{ institutions.length }}</h3>
+    </div>
+
+    <span class="approved-badge">Approved</span>
+  </div>
+
+  <!-- Loading -->
+  <div class="message loading" *ngIf="loading">
+    Loading approved institutions...
+  </div>
+
+  <!-- Error -->
+  <div class="message error" *ngIf="error">
+    {{ error }}
+    <button type="button" (click)="loadApprovedInstitutions()">
+      Retry
+    </button>
+  </div>
+
+  <!-- Institutions table -->
+  <div class="table-container" *ngIf="!loading && !error">
+
+    <table *ngIf="institutions.length > 0; else emptyState">
+
+      <thead>
+        <tr>
+          <th>Institution Name</th>
+          <th>Date of Onboarding</th>
+          <th>Subcounty</th>
+          <th>Status</th>
+          <th>Assigned SCDE</th>
+          <th>Assign CQASO</th>
+          <th>View Details</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr
+          *ngFor="let institution of institutions; let i = index; trackBy: trackById">
+
+          <td class="institution-name">
+            {{ institution.name }}
+          </td>
+
+          <td>
+            {{ formatDate(institution.decidedAt) }}
+          </td>
+
+          <td>
+            {{ institution.subCounty || '—' }}
+          </td>
+
+          <td>
+            <span class="status-badge">
+              {{ institution.status }}
+            </span>
+          </td>
+
+          <!-- Assigned SCDE: plain black text -->
+          <td>
+            <span class="assigned-text">Assigned</span>
+          </td>
+
+          <!-- CQASO: grey Assign button -->
+          <td>
+            <button
+              type="button"
+              class="assign-button"
+              disabled>
+              Assign
+            </button>
+          </td>
+
+          <!-- View Details: preserve existing red eye -->
+          <td>
+            <button
+              type="button"
+              class="view-button"
+              (click)="viewDetails(institution.id)"
+              title="View institution details">
+
+              <svg
+                class="eye-icon"
+                viewBox="0 0 24 24"
+                width="22"
+                height="22"
+                aria-hidden="true">
+
+                <path
+                  fill="#dc3545"
+                  d="M12 5C6.5 5 2.1 8.6 1 12c1.1 3.4 5.5 7 11 7s9.9-3.6 11-7c-1.1-3.4-5.5-7-11-7z"/>
+
+                <circle cx="12" cy="12" r="4.2" fill="#fff"/>
+
+                <circle cx="12" cy="12" r="2.2" fill="#dc3545"/>
+
+              </svg>
+
+              View
+            </button>
+          </td>
+
+        </tr>
+      </tbody>
+
+    </table>
+
+    <!-- Empty state -->
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <h3>No approved institutions found</h3>
+        <p>Institutions approved by the CDE will appear here.</p>
+      </div>
+    </ng-template>
+
+  </div>
+
+</div>

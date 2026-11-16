@@ -61,6 +61,47 @@ namespace KemisOnboarding.Api.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("KemisOnboarding.Api.Models.InspectionEvidence", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long>("FileSizeBytes")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("OriginalFileName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("QasoInspectionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("StoredFileName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UploadedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QasoInspectionId");
+
+                    b.ToTable("InspectionEvidence");
+                });
+
             modelBuilder.Entity("KemisOnboarding.Api.Models.InspectionReport", b =>
                 {
                     b.Property<Guid>("Id")
@@ -74,6 +115,9 @@ namespace KemisOnboarding.Api.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("FileKey")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Findings")
                         .HasColumnType("text");
 
                     b.Property<int>("InstitutionId")
@@ -305,6 +349,59 @@ namespace KemisOnboarding.Api.Migrations
                     b.ToTable("Notifications");
                 });
 
+            modelBuilder.Entity("KemisOnboarding.Api.Models.QasoInspection", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AssignmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool?>("CertificateAuthenticityVerified")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("CertificateComplete")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("CertificateIssuerVerified")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("CertificateNotExpired")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("CertificateReviewNotes")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("CertificateReviewedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("CertificateStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("PhysicalInspectionStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ScheduleNotes")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ScheduledAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssignmentId")
+                        .IsUnique();
+
+                    b.ToTable("QasoInspections");
+                });
+
             modelBuilder.Entity("KemisOnboarding.Api.Models.ReviewComment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -334,6 +431,17 @@ namespace KemisOnboarding.Api.Migrations
                     b.ToTable("ReviewComments");
                 });
 
+            modelBuilder.Entity("KemisOnboarding.Api.Models.InspectionEvidence", b =>
+                {
+                    b.HasOne("KemisOnboarding.Api.Models.QasoInspection", "QasoInspection")
+                        .WithMany("EvidenceFiles")
+                        .HasForeignKey("QasoInspectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("QasoInspection");
+                });
+
             modelBuilder.Entity("KemisOnboarding.Api.Models.InspectionReport", b =>
                 {
                     b.HasOne("KemisOnboarding.Api.Models.InstitutionAssignment", "Assignment")
@@ -361,6 +469,22 @@ namespace KemisOnboarding.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("Institution");
+                });
+
+            modelBuilder.Entity("KemisOnboarding.Api.Models.QasoInspection", b =>
+                {
+                    b.HasOne("KemisOnboarding.Api.Models.InstitutionAssignment", "Assignment")
+                        .WithOne()
+                        .HasForeignKey("KemisOnboarding.Api.Models.QasoInspection", "AssignmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Assignment");
+                });
+
+            modelBuilder.Entity("KemisOnboarding.Api.Models.QasoInspection", b =>
+                {
+                    b.Navigation("EvidenceFiles");
                 });
 #pragma warning restore 612, 618
         }

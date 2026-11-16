@@ -1,0 +1,188 @@
+
+<div class="dashboard-page">
+
+  <aside class="sidebar">
+
+    <img class="brand-img" src="/images/image.png" alt="Republic of Kenya Coat of Arms" />
+
+    <div class="user-profile">
+      <div class="avatar">Q</div>
+
+      <div>
+        <strong>QASO Officer</strong>
+        <small>Quality Assurance</small>
+      </div>
+    </div>
+
+    <nav>
+      <a class="active">Dashboard</a>
+      <a>Assigned Institutions</a>
+    </nav>
+
+    <button
+      class="logout-button"
+      (click)="logout()">
+      Logout
+    </button>
+
+  </aside>
+
+  <main class="main-content">
+
+    <header class="topbar">
+      <div>
+        <h2>QASO Dashboard</h2>
+        <p>
+          Manage assigned institution inspections and certificate verification.
+        </p>
+      </div>
+
+      <button
+        class="refresh-button"
+        (click)="loadInstitutions()"
+        [disabled]="loading">
+        {{ loading ? 'Loading...' : 'Refresh' }}
+      </button>
+    </header>
+
+    <section class="summary-grid">
+
+      <div class="summary-card">
+        <span>Total Assigned</span>
+        <h2>{{ institutions.length }}</h2>
+      </div>
+
+      <div class="summary-card">
+        <span>Pending Certificate Review</span>
+        <h2>{{ pendingCertificateReviews }}</h2>
+      </div>
+
+      <div class="summary-card">
+        <span>Physical Inspections Required</span>
+        <h2>{{ physicalInspectionsRequired }}</h2>
+      </div>
+
+      <div class="summary-card">
+        <span>Reports Submitted</span>
+        <h2>{{ submittedReports }}</h2>
+      </div>
+
+    </section>
+
+    <div
+      class="alert error"
+      *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <section class="content-card">
+
+      <div class="section-heading">
+        <div>
+          <h3>Assigned Institutions</h3>
+          <p>
+            Institutions assigned to you by the SCDE officer.
+          </p>
+        </div>
+      </div>
+
+      <div
+        class="loading-message"
+        *ngIf="loading">
+        Loading assigned institutions...
+      </div>
+
+      <div
+        class="empty-state"
+        *ngIf="!loading && !errorMessage && institutions.length === 0">
+
+        <h3>No Assigned Institutions</h3>
+
+        <p>
+          You currently have no institutions assigned for inspection.
+        </p>
+
+      </div>
+
+      <div
+        class="table-wrapper"
+        *ngIf="!loading && institutions.length > 0">
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>Institution</th>
+              <th>UIC</th>
+              <th>County</th>
+              <th>Certificate</th>
+              <th>Physical Inspection</th>
+              <th>Report</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            <tr *ngFor="let institution of institutions">
+
+              <td>
+                <strong>
+                  {{ institution.institutionName }}
+                </strong>
+                <small>
+                  {{ institution.subCounty }}
+                </small>
+              </td>
+
+              <td>{{ institution.uic }}</td>
+
+              <td>{{ institution.county }}</td>
+
+              <td>
+                <span
+                  class="status"
+                  [ngClass]="{
+                    'valid': institution.certificateStatus === 'Valid',
+                    'invalid': institution.certificateStatus === 'Invalid',
+                    'missing': institution.certificateStatus === 'Missing',
+                    'pending': institution.certificateStatus === 'NotReviewed'
+                  }">
+                  {{ getCertificateStatus(institution.certificateStatus) }}
+                </span>
+              </td>
+
+              <td>
+                {{ getInspectionStatus(institution.physicalInspectionStatus) }}
+              </td>
+
+              <td>
+                <span
+                  class="status"
+                  [class.completed]="institution.hasSubmittedReport"
+                  [class.pending]="!institution.hasSubmittedReport">
+                  {{ institution.hasSubmittedReport ? 'Submitted' : 'Pending' }}
+                </span>
+              </td>
+
+              <td>
+                <button
+                  class="view-button"
+                  (click)="viewInstitution(institution)">
+                  View Details
+                </button>
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>

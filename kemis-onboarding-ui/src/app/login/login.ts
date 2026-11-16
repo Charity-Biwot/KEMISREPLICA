@@ -13,6 +13,7 @@ import { AuthService } from '../services/auth.service';
   styleUrl: './login.scss'
 })
 export class Login {
+
   email = '';
   password = '';
   message = '';
@@ -24,6 +25,7 @@ export class Login {
   ) {}
 
   submitLogin(): void {
+
     if (this.isSubmitting) {
       return;
     }
@@ -37,27 +39,77 @@ export class Login {
 
     this.isSubmitting = true;
 
-    this.authService.login(this.email.trim(), this.password).subscribe({
+    this.authService.login(
+      this.email.trim(),
+      this.password
+    ).subscribe({
+
       next: (response) => {
+
         const role = response.role?.trim().toUpperCase();
 
-        if (role === 'SCDE') {
-          this.router.navigate(['/scde-dashboard']);
-        } else if (role === 'CDE') {
-          this.router.navigate(['/cde-dashboard']);
-        } else {
-          this.authService.logout();
-          this.message = 'Your account does not have dashboard access.';
+        console.log('Login successful. User role:', role);
+
+        let destination = '';
+
+        switch (role) {
+
+          case 'QASO':
+            destination = '/qaso-dashboard';
+            break;
+
+          case 'SCDE':
+            destination = '/scde-dashboard';
+            break;
+
+          case 'CDE':
+            destination = '/cde-dashboard';
+            break;
+
+          case 'CQASO':
+            destination = '/cqaso-dashboard';
+            break;
+
+          case 'ADMIN':
+            destination = '/admin-dashboard';
+            break;
+
+          default:
+            this.authService.logout();
+            this.message =
+              'Your account does not have dashboard access.';
+            this.isSubmitting = false;
+            return;
         }
 
-        this.isSubmitting = false;
+        this.router.navigateByUrl(destination).then(
+          (success) => {
+            this.isSubmitting = false;
+
+            if (!success) {
+              this.message = 'Unable to open your dashboard.';
+            }
+          }
+        ).catch((error) => {
+          console.error('Dashboard navigation failed:', error);
+          this.message = 'Unable to open your dashboard.';
+          this.isSubmitting = false;
+        });
+
       },
 
       error: (error) => {
+
         console.error('Login error:', error);
-        this.message = 'Login failed. Check your email and password.';
+
+        this.message =
+          error.status === 401
+            ? 'Invalid email or password.'
+            : 'Login failed. Please try again.';
+
         this.isSubmitting = false;
       }
+
     });
   }
 }

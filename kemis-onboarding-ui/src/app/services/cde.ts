@@ -1,3 +1,4 @@
+
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -22,6 +23,20 @@ export interface DashboardSummary {
   approved: number;
   rejected: number;
   pending: number;
+}
+
+export interface CdeInstitutionList {
+  id: number;
+  name: string;
+  uic: string;
+  county: string;
+  subCounty: string;
+  approvalStartedAt: string | null;
+  status: string;
+  decisionReason: string | null;
+  decidedAt: string | null;
+  scdeName: string | null;
+  cqasoName: string | null;
 }
 
 export interface CdeAssignRequest {
@@ -51,6 +66,20 @@ export class CdeService {
   getPending(): Observable<PendingInstitution[]> {
     return this.http.get<PendingInstitution[]>(
       `${this.apiUrl}/cde/institutions/pending`
+    );
+  }
+
+  // Get approved institutions
+  getApproved(): Observable<CdeInstitutionList[]> {
+    return this.http.get<CdeInstitutionList[]>(
+      `${this.apiUrl}/cde/institutions/approved`
+    );
+  }
+
+  // Get rejected institutions
+  getRejected(): Observable<CdeInstitutionList[]> {
+    return this.http.get<CdeInstitutionList[]>(
+      `${this.apiUrl}/cde/institutions/rejected`
     );
   }
 

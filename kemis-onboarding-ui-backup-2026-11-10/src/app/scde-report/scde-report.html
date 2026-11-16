@@ -1,0 +1,47 @@
+
+<div class="report-page">
+  <div class="report-card">
+    <h1>SCDE Inspection Report</h1>
+    <p>Complete the details below to submit an inspection report.</p>
+
+    <form (ngSubmit)="submitReport()" #reportForm="ngForm">
+      <label for="institutionId">Institution ID</label>
+      <input
+        id="institutionId"
+        type="number"
+        name="institutionId"
+        [(ngModel)]="institutionId"
+        required
+        min="1"
+      />
+
+      <label for="summary">Report Summary</label>
+      <textarea
+        id="summary"
+        name="summary"
+        [(ngModel)]="summary"
+        rows="5"
+        required
+      ></textarea>
+
+      <label for="recommendation">Recommendation</label>
+      <select
+        id="recommendation"
+        name="recommendation"
+        [(ngModel)]="recommendation"
+        required
+      >
+        <option value="">Select a recommendation</option>
+        <option value="Approve">Approve</option>
+        <option value="Reject">Reject</option>
+        <option value="RequestChanges">Request Changes</option>
+      </select>
+
+      <button type="submit" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Submitting...' : 'Submit Report' }}
+      </button>
+
+      <p *ngIf="message" role="status">{{ message }}</p>
+    </form>
+  </div>
+</div>

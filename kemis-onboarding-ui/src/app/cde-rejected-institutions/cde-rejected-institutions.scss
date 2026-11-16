@@ -1,0 +1,184 @@
+
+.rejected-page {
+  padding: 24px;
+  color: #263445;
+  background: #f5f7fa;
+  min-height: 100%;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+
+  h2 {
+    margin: 0 0 6px;
+    font-size: 23px;
+    font-weight: 700;
+    color: #17365d;
+  }
+
+  p {
+    margin: 0;
+    color: #718096;
+    font-size: 14px;
+  }
+}
+
+.back-button {
+  padding: 10px 16px;
+  border: 1px solid #d5dce5;
+  border-radius: 5px;
+  background: #fff;
+  color: #334e68;
+  cursor: pointer;
+  font-weight: 600;
+
+  &:hover {
+    background: #edf2f7;
+  }
+}
+
+.summary-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  padding: 20px 24px;
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+  margin-bottom: 22px;
+
+  h3 {
+    margin: 8px 0 0;
+    font-size: 28px;
+    color: #17365d;
+  }
+}
+
+.summary-label {
+  color: #718096;
+  font-size: 14px;
+}
+
+.rejected-badge,
+.status-badge {
+  display: inline-block;
+  background: #fdeaea;
+  color: #b42318;
+  padding: 6px 11px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+}
+
+table {
+  width: 100%;
+  min-width: 1150px;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  th {
+    background: #edf2f7;
+    color: #334e68;
+    text-align: left;
+    padding: 14px 12px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 13px 12px;
+    border-top: 1px solid #edf0f4;
+    color: #526477;
+  }
+
+  tbody tr:hover {
+    background: #f8fafc;
+  }
+}
+
+.institution-name {
+  color: #17365d;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.reason-cell {
+  min-width: 180px;
+  max-width: 260px;
+  white-space: normal;
+  line-height: 1.5;
+}
+
+.view-button {
+  padding: 7px 13px;
+  border: none;
+  border-radius: 4px;
+  background: #173f70;
+  color: #fff;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+
+  &:hover {
+    background: #0f2e53;
+  }
+}
+
+.message {
+  padding: 16px;
+  margin-bottom: 18px;
+  border-radius: 5px;
+  background: #fff;
+}
+
+.error {
+  color: #a52a2a;
+  border: 1px solid #f0caca;
+
+  button {
+    margin-left: 12px;
+    cursor: pointer;
+  }
+}
+
+.loading {
+  color: #526477;
+}
+
+.empty-state {
+  padding: 45px 20px;
+  text-align: center;
+
+  h3 {
+    color: #334e68;
+    margin-bottom: 8px;
+  }
+
+  p {
+    color: #718096;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 700px) {
+  .rejected-page {
+    padding: 14px;
+  }
+
+  .page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,311 @@
+<div class="cde-dashboard">
+
+  <!-- Sidebar -->
+  <aside class="dashboard-sidebar">
+    <div class="sidebar-brand">
+      <img src="assets/kenya-coat-of-arms.png" alt="Republic of Kenya coat of arms" />
+    </div>
+
+    <nav class="sidebar-navigation">
+      <a class="nav-item active">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 3h8v10H3zM13 3h8v6h-8zM13 11h8v10h-8zM3 15h8v6H3z"/></svg>
+        <span>Dashboard</span>
+      </a>
+
+      <a class="nav-item">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6" fill="none" stroke="currentColor" stroke-width="3"/><path d="M15 15l6 6" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+        <span>Menu Search</span>
+      </a>
+
+      <a class="nav-item">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 2h6v3H9z"/><path fill-rule="evenodd" d="M6 4h2v3h8V4h2a1 1 0 011 1v16a1 1 0 01-1 1H6a1 1 0 01-1-1V5a1 1 0 011-1zm2 8h2v2H8zm4 0h5v2h-5zm-4 4h2v2H8zm4 0h5v2h-5z"/></svg>
+        <span>KEMIS Reports</span>
+      </a>
+
+      <a class="nav-item">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2 5h20v2l-10 7L2 7z"/><path d="M2 9.5l10 7 10-7V19H2z"/></svg>
+        <span>Escalations</span>
+      </a>
+
+      <a class="nav-item">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 2h9l4 4v5h-2V8h-4V4H7v16h5v2H5z"/><path d="M20.7 12.3l1 1a1 1 0 010 1.4L14 22l-3 .5.5-3 7.8-7.2a1 1 0 011.4 0z"/></svg>
+        <span>Registration</span>
+      </a>
+    </nav>
+
+    <a class="user-manual">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 4h8a1 1 0 011 1v15a3 3 0 00-3-2H3zM21 4h-8a1 1 0 00-1 1v15a3 3 0 013-2h6z"/></svg>
+      <span>User Manual</span>
+    </a>
+  </aside>
+
+  <!-- Dashboard main area -->
+  <div class="dashboard-main">
+
+    <!-- Header -->
+    <header class="dashboard-topbar">
+
+      <span class="collapse-toggle" aria-hidden="true">&#8249;</span>
+
+      <!-- Moving announcement -->
+      <div class="context-marquee">
+        <strong class="context-title">
+          You are Currently accessing Junior School Information
+        </strong>
+      </div>
+
+      <!-- Right-side controls -->
+      <div class="topbar-user">
+
+        <select class="level-select" aria-label="Education level">
+          <option>Primary School Education</option>
+          <option selected>Junior School</option>
+          <option>Senior School</option>
+          <option>Foundation</option>
+          <option>Intermediate</option>
+          <option>Pre-Vocational</option>
+          <option>Vocational</option>
+        </select>
+
+        <select class="level-select level-select-small" aria-label="Options">
+          <option></option>
+        </select>
+
+        <div class="user-avatar">CD</div>
+
+        <div class="user-details">
+          <strong>CDE</strong>
+          <span>{{ county || 'County' }} County</span>
+        </div>
+
+        <!-- Caret (opens menu) + power icon (logs out) + dropdown -->
+        <div class="power-menu-wrapper">
+
+          <button
+            type="button"
+            class="caret-button"
+            (click)="toggleUserMenu(); $event.stopPropagation()"
+            aria-label="Account menu"
+            [attr.aria-expanded]="isUserMenuOpen"></button>
+
+          <button
+            type="button"
+            class="power-icon-button"
+            (click)="logout()"
+            aria-label="Log out">
+
+            <svg class="power-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              aria-hidden="true">
+              <path d="M12 3v9"/>
+              <path d="M6.3 6.8a8 8 0 1011.4 0"/>
+            </svg>
+          </button>
+
+          <div class="user-dropdown" *ngIf="isUserMenuOpen">
+
+            <button type="button" (click)="goToDashboard()">
+              Dashboard
+            </button>
+
+            <button type="button" (click)="changePassword()">
+              Change Password
+            </button>
+
+            <div class="dropdown-divider"></div>
+
+            <button
+              type="button"
+              class="logout-option"
+              (click)="logout()">
+              Log Out
+            </button>
+
+          </div>
+        </div>
+
+      </div>
+    </header>
+
+    <main class="dashboard-content">
+      <div class="page-panel">
+
+        <section class="dashboard-heading">
+          <h1>County Director Dashboard</h1>
+          <p class="heading-description">
+            {{ county || 'County' }} - Educational Oversight &amp; Management
+          </p>
+        </section>
+
+        <!-- Five statistic cards -->
+        <section class="statistics-grid">
+
+          <article class="stat-card approved-card">
+            <svg class="stat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 10l8-6 8 6v10H4zm6 4v6h4v-6z"/></svg>
+            <strong class="stat-number">{{ approvedText }}</strong>
+            <span class="stat-label">Approved Institutions</span>
+            <span class="stat-caption">Onboard under KEMIS</span>
+          </article>
+
+          <article class="stat-card rejected-card">
+            <svg class="stat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 10l8-6 8 6v10H4zm6 4v6h4v-6z"/></svg>
+            <strong class="stat-number">{{ rejectedText }}</strong>
+            <span class="stat-label">Rejected Institutions</span>
+            <span class="stat-caption">Onboard under KEMIS</span>
+          </article>
+
+          <article
+            class="stat-card pending-card clickable-card"
+            role="button"
+            tabindex="0"
+            (click)="openPendingApplications()"
+            (keydown.enter)="openPendingApplications()"
+            (keydown.space)="$event.preventDefault(); openPendingApplications()">
+
+            <svg class="stat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 2h6v3H9z"/><path fill-rule="evenodd" d="M6 4h2v3h8V4h2a1 1 0 011 1v16a1 1 0 01-1 1H6a1 1 0 01-1-1V5a1 1 0 011-1zm2 8h2v2H8zm4 0h5v2h-5zm-4 4h2v2H8zm4 0h5v2h-5z"/></svg>
+
+            <strong class="stat-number">{{ pendingCount }}</strong>
+            <span class="stat-label">Pending Applications</span>
+            <span class="stat-caption">Awaiting CDE Review</span>
+          </article>
+
+          <article class="stat-card appeals-card">
+            <svg class="stat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11 3h2v3h6v2l3 7a4 4 0 01-6 0l3-7h-3v11h4v2H7v-2h4V8H8l3 7a4 4 0 01-6 0l3-7V6h3z"/></svg>
+            <strong class="stat-number">—</strong>
+            <span class="stat-label">Transfer Appeals</span>
+            <span class="stat-caption">Requiring Decision</span>
+          </article>
+
+          <article class="stat-card learners-card">
+            <svg class="stat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 20c0-4 3-6 6-6s6 2 6 6zM14 20c0-2 1-4 3-4.5 3 0 5 1.5 5 4.5z"/></svg>
+            <strong class="stat-number">—</strong>
+            <span class="stat-label">Total Learners</span>
+            <span class="stat-caption">County-wide Enrollment</span>
+          </article>
+
+        </section>
+
+        <!-- Approval breakdown and institution categories -->
+        <section class="dashboard-panels">
+
+          <article class="dashboard-panel approval-panel">
+            <div class="panel-heading">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm-1.5 14.5L6 12l1.4-1.4 3.1 3.1 6.1-6.1L18 9.0z"/></svg>
+              <h2>Institution Approval Status Breakdown</h2>
+              <p>Current status of institution applications</p>
+            </div>
+
+            <div class="panel-body">
+
+              <div class="status-row">
+                <i class="status-dot approved-dot"></i>
+                <span class="status-name">Approved</span>
+                <div class="status-bar">
+                  <span class="approved-fill"
+                    [style.width.%]="((+approvedText || 0) + (+pendingCount || 0) + (+rejectedText || 0)) ? (100 * (+approvedText || 0)) / ((+approvedText || 0) + (+pendingCount || 0) + (+rejectedText || 0)) : 0"></span>
+                </div>
+                <strong class="status-count">{{ approvedText }}</strong>
+              </div>
+
+              <div class="status-row">
+                <i class="status-dot pending-dot"></i>
+                <span class="status-name">Pending</span>
+                <div class="status-bar">
+                  <span class="pending-fill"
+                    [style.width.%]="((+approvedText || 0) + (+pendingCount || 0) + (+rejectedText || 0)) ? (100 * (+pendingCount || 0)) / ((+approvedText || 0) + (+pendingCount || 0) + (+rejectedText || 0)) : 0"></span>
+                </div>
+                <strong class="status-count">{{ pendingCount }}</strong>
+              </div>
+
+              <div class="status-row">
+                <i class="status-dot rejected-dot"></i>
+                <span class="status-name">Rejected</span>
+                <div class="status-bar">
+                  <span class="rejected-fill"
+                    [style.width.%]="((+approvedText || 0) + (+pendingCount || 0) + (+rejectedText || 0)) ? (100 * (+rejectedText || 0)) / ((+approvedText || 0) + (+pendingCount || 0) + (+rejectedText || 0)) : 0"></span>
+                </div>
+                <strong class="status-count">{{ rejectedText }}</strong>
+              </div>
+
+              <div class="approval-summary">
+                <div class="approval-total approved-text">
+                  <strong>{{ approvedText }}</strong>
+                  <span>Approved</span>
+                </div>
+
+                <div class="approval-total pending-text">
+                  <strong>{{ pendingCount }}</strong>
+                  <span>Pending</span>
+                </div>
+
+                <div class="approval-total rejected-text">
+                  <strong>{{ rejectedText }}</strong>
+                  <span>Rejected</span>
+                </div>
+              </div>
+
+            </div>
+          </article>
+
+          <article class="dashboard-panel category-panel">
+            <div class="panel-heading">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11 2v10h10A10 10 0 0011 2z"/><path d="M9 4a9 9 0 109 9H9z"/></svg>
+              <h2>Institution Categories</h2>
+              <p>Distribution by institution type</p>
+            </div>
+
+            <div class="panel-body category-chart-container">
+              <div class="category-donut">
+                <div class="donut-center"></div>
+              </div>
+
+              <div class="category-legend">
+                <div>
+                  <i class="category-dot public-dot"></i>
+                  <span>Regular</span>
+                  <strong>—</strong>
+                </div>
+
+                <div>
+                  <i class="category-dot private-dot"></i>
+                  <span>Integrated</span>
+                  <strong>—</strong>
+                </div>
+
+                <div>
+                  <i class="category-dot faith-dot"></i>
+                  <span>SNE</span>
+                  <strong>—</strong>
+                </div>
+              </div>
+            </div>
+          </article>
+
+        </section>
+
+        <!-- Sub-county distribution -->
+        <section class="dashboard-panel distribution-panel">
+          <div class="panel-heading">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 4h3v16H4zM10.5 10h3v10h-3zM17 7h3v13h-3z"/></svg>
+            <h2>Distribution of Institutions by Sub-County</h2>
+            <p>Institution count across all sub-counties in {{ county || 'your county' }}</p>
+          </div>
+
+          <div class="panel-body distribution-empty"></div>
+        </section>
+
+        <!-- Quick actions -->
+        <section class="quick-actions-panel">
+          <div class="quick-actions-text">
+            <h2>Quick Actions</h2>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+</div>

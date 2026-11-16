@@ -1,0 +1,93 @@
+
+<div class="rejected-page">
+
+  <div class="page-header">
+    <div>
+      <h2>Rejected Institutions</h2>
+      <p>View institutions whose onboarding applications were rejected by the CDE.</p>
+    </div>
+
+    <button class="back-button" (click)="goBack()">
+      Back to Dashboard
+    </button>
+  </div>
+
+  <div class="summary-card">
+    <div>
+      <span class="summary-label">Rejected Institutions</span>
+      <h3>{{ institutions.length }}</h3>
+    </div>
+    <span class="rejected-badge">Rejected</span>
+  </div>
+
+  <div class="message loading" *ngIf="loading">
+    Loading rejected institutions...
+  </div>
+
+  <div class="message error" *ngIf="error">
+    {{ error }}
+    <button (click)="loadRejectedInstitutions()">Retry</button>
+  </div>
+
+  <div class="table-container" *ngIf="!loading && !error">
+
+    <table *ngIf="institutions.length > 0; else emptyState">
+      <thead>
+        <tr>
+          <th>S/No.</th>
+          <th>Institution No.</th>
+          <th>Institution Name</th>
+          <th>County</th>
+          <th>Sub-County</th>
+          <th>SCDE</th>
+          <th>CQASO</th>
+          <th>Decision Date</th>
+          <th>Reason for Rejection</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr
+          *ngFor="let institution of institutions; let i = index; trackBy: trackById"
+        >
+          <td>{{ i + 1 }}</td>
+          <td>{{ institution.uic }}</td>
+          <td class="institution-name">{{ institution.name }}</td>
+          <td>{{ institution.county }}</td>
+          <td>{{ institution.subCounty }}</td>
+          <td>{{ institution.scdeName || '—' }}</td>
+          <td>{{ institution.cqasoName || '—' }}</td>
+          <td>{{ formatDate(institution.decidedAt) }}</td>
+          <td class="reason-cell">
+            {{ institution.decisionReason || 'No reason provided' }}
+          </td>
+          <td>
+            <span class="status-badge">
+              {{ institution.status }}
+            </span>
+          </td>
+          <td>
+            <button
+              class="view-button"
+              (click)="viewDetails(institution.id)"
+              title="View institution details"
+            >
+              View
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <h3>No rejected institutions found</h3>
+        <p>Institutions rejected by the CDE will appear here.</p>
+      </div>
+    </ng-template>
+
+  </div>
+
+</div>

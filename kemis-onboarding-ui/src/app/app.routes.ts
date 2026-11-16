@@ -11,7 +11,13 @@ import { CdeDashboard } from './cde-dashboard/cde-dashboard';
 import { CdeInstitutionApproval } from './cde-institution-approval/cde-institution-approval';
 import { CdeInstitutionDetails } from './cde-institution-details/cde-institution-details';
 
+import { CdeApprovedInstitutions } from './cde-approved-institutions/cde-approved-institutions';
+import { CdeRejectedInstitutions } from './cde-rejected-institutions/cde-rejected-institutions';
+
 import { CdeShell } from './cde-shell/cde-shell';
+import { QasoDashboardComponent } from './qaso-dashboard/qaso-dashboard.component';
+import { QasoInstitutionDetails } from './components/qaso-institution-details/qaso-institution-details';
+
 import { cdeGuard } from './services/auth.guard';
 
 export const routes: Routes = [
@@ -41,6 +47,18 @@ export const routes: Routes = [
     component: ScdeInstitutionDetails
   },
 
+  // QASO dashboard
+  {
+    path: 'qaso-dashboard',
+    component: QasoDashboardComponent
+  },
+
+  // QASO institution details
+  {
+    path: 'qaso-institution-details/:id',
+    component: QasoInstitutionDetails
+  },
+
   // Full CDE dashboard
   {
     path: 'cde-dashboard',
@@ -48,7 +66,7 @@ export const routes: Routes = [
     canActivate: [cdeGuard]
   },
 
-  // Existing CDE shared shell
+  // CDE shared shell and pages
   {
     path: '',
     component: CdeShell,
@@ -61,6 +79,14 @@ export const routes: Routes = [
       {
         path: 'cde-institution-details/:id',
         component: CdeInstitutionDetails
+      },
+      {
+        path: 'cde-approved-institutions',
+        component: CdeApprovedInstitutions
+      },
+      {
+        path: 'cde-rejected-institutions',
+        component: CdeRejectedInstitutions
       }
     ]
   }

@@ -1,0 +1,559 @@
+
+<div class="details-page">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">K</div>
+      <div>
+        <h2>KEMIS</h2>
+        <span>Institution Management System</span>
+      </div>
+    </div>
+
+    <div class="user-profile">
+      <div class="avatar">Q</div>
+      <div>
+        <strong>QASO Officer</strong>
+        <span>Quality Assurance</span>
+      </div>
+    </div>
+
+    <nav>
+      <a routerLink="/qaso-dashboard">Dashboard</a>
+      <a class="active" [routerLink]="['/qaso-institution-details', institutionId]">
+        Institution Details
+      </a>
+    </nav>
+
+    <button class="logout-button" type="button" (click)="logout()">
+      Logout
+    </button>
+  </aside>
+
+  <main class="main-content">
+
+    <header class="topbar">
+      <div>
+        <h1>Institution Inspection Details</h1>
+        <p>Review institution documents, conduct inspection and submit your recommendation.</p>
+      </div>
+
+      <div class="header-actions">
+        <button type="button" class="secondary-button" (click)="goBack()">
+          Back to Dashboard
+        </button>
+
+        <button
+          type="button"
+          class="secondary-button"
+          (click)="loadInstitution()"
+          [disabled]="loading || saving">
+          Refresh
+        </button>
+      </div>
+    </header>
+
+    <div *ngIf="errorMessage" class="alert error-alert">
+      {{ errorMessage }}
+    </div>
+
+    <div *ngIf="successMessage" class="alert success-alert">
+      {{ successMessage }}
+    </div>
+
+    <div *ngIf="loading" class="loading-message">
+      Loading institution details...
+    </div>
+
+    <ng-container *ngIf="!loading && institution">
+
+      <!-- INSTITUTION INFORMATION SUBMITTED BY HOI -->
+
+      <section class="content-card">
+
+        <div class="section-heading">
+          <div>
+            <h2>Institution Information</h2>
+            <p>Original registration information submitted by the Head of Institution.</p>
+          </div>
+
+          <span class="institution-status">Assigned</span>
+        </div>
+
+        <div class="details-grid">
+
+          <div class="detail-item">
+            <label>Institution Name</label>
+            <strong>{{ institution.institutionName || 'Not provided' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>UIC</label>
+            <strong>{{ institution.uic || 'Not provided' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Name as on Certificate</label>
+            <strong>{{ institution.nameAsOnCertificate || 'Not provided' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Institution Type</label>
+            <strong>{{ institution.institutionType || 'Not provided' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Institution Level</label>
+            <strong>{{ institution.institutionLevel || 'Not provided' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>State Department</label>
+            <strong>{{ institution.stateDepartment || 'Not provided' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Application Type</label>
+            <strong>{{ institution.applicationType || 'Not provided' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Accommodation Type</label>
+            <strong>{{ institution.accommodationType || 'Not provided' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>School Categories</label>
+            <strong>{{ institution.schoolCategories || 'Not provided' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Email Address</label>
+            <strong>{{ institution.email || 'Not provided' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Mobile Number</label>
+            <strong>{{ institution.mobileNumber || 'Not provided' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>County</label>
+            <strong>{{ institution.county || 'Not provided' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Subcounty</label>
+            <strong>{{ institution.subCounty || 'Not provided' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Constituency</label>
+            <strong>{{ institution.constituency || 'Not provided' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Postal Code</label>
+            <strong>{{ institution.postalCode || 'Not provided' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Postal Location</label>
+            <strong>{{ institution.postalLocation || 'Not provided' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Latitude</label>
+            <strong>{{ institution.latitude ?? 'Not provided' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Longitude</label>
+            <strong>{{ institution.longitude ?? 'Not provided' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Registration Date</label>
+            <strong>
+              {{ institution.createdAt ? (institution.createdAt | date:'medium') : 'Not provided' }}
+            </strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Submission Date</label>
+            <strong>
+              {{ institution.submittedAt ? (institution.submittedAt | date:'medium') : 'Not provided' }}
+            </strong>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- CERTIFICATE VERIFICATION -->
+
+      <section class="content-card">
+
+        <div class="section-heading">
+          <div>
+            <h2>Registration Certificate Verification</h2>
+            <p>Review the institution's registration certificate before making a recommendation.</p>
+          </div>
+
+          <span
+            class="status"
+            [ngClass]="{
+              'status-pending': certificateStatus === 'NotReviewed',
+              'status-approved': certificateStatus === 'Valid',
+              'status-rejected': certificateStatus === 'Invalid',
+              'status-warning': certificateStatus === 'Missing'
+            }">
+            {{ certificateStatus }}
+          </span>
+        </div>
+
+        <div class="certificate-information">
+          <p>
+            <strong>Certificate file:</strong>
+            <span *ngIf="!isCertificateMissing">Available for review</span>
+            <span *ngIf="isCertificateMissing">Missing or unavailable</span>
+          </p>
+
+          <p *ngIf="isCertificateMissing" class="info-message">
+            No certificate file is available. Record the certificate as missing.
+            The system will require a physical inspection.
+          </p>
+        </div>
+
+        <div *ngIf="certificateReviewPending && !hasSubmittedReport">
+
+          <div *ngIf="!isCertificateMissing" class="form-section">
+            <h3>Certificate Verification Checklist</h3>
+            <p>Confirm each item after reviewing the uploaded certificate.</p>
+
+            <div class="form-group">
+              <label>1. Is the certificate authentic?</label>
+              <select [(ngModel)]="certificateAuthenticityVerified">
+                <option [ngValue]="null">Select answer</option>
+                <option [ngValue]="true">Yes</option>
+                <option [ngValue]="false">No</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>2. Is the issuing authority valid?</label>
+              <select [(ngModel)]="certificateIssuerVerified">
+                <option [ngValue]="null">Select answer</option>
+                <option [ngValue]="true">Yes</option>
+                <option [ngValue]="false">No</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>3. Is the certificate still within its validity period?</label>
+              <select [(ngModel)]="certificateNotExpired">
+                <option [ngValue]="null">Select answer</option>
+                <option [ngValue]="true">Yes</option>
+                <option [ngValue]="false">No</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>4. Is the certificate complete and legible?</label>
+              <select [(ngModel)]="certificateComplete">
+                <option [ngValue]="null">Select answer</option>
+                <option [ngValue]="true">Yes</option>
+                <option [ngValue]="false">No</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Remarks / justification</label>
+              <textarea
+                [(ngModel)]="certificateNotes"
+                rows="3"
+                placeholder="Enter remarks. Required if any verification check fails.">
+              </textarea>
+            </div>
+
+            <button
+              type="button"
+              class="primary-button"
+              (click)="reviewCertificate()"
+              [disabled]="saving">
+              {{ saving ? 'Saving...' : 'Submit Certificate Verification' }}
+            </button>
+          </div>
+
+          <div *ngIf="isCertificateMissing" class="form-section">
+            <h3>Record Missing Certificate</h3>
+
+            <div class="form-group">
+              <label>Remarks</label>
+              <textarea
+                [(ngModel)]="certificateNotes"
+                rows="3"
+                placeholder="Explain that the registration certificate is missing or unavailable.">
+              </textarea>
+            </div>
+
+            <button
+              type="button"
+              class="primary-button"
+              (click)="reviewCertificate()"
+              [disabled]="saving">
+              {{ saving ? 'Saving...' : 'Record Missing Certificate & Continue to Inspection' }}
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="!certificateReviewPending" class="completed-message">
+          <strong>Certificate review status: {{ certificateStatus }}</strong>
+
+          <p *ngIf="certificateStatus === 'Valid'">
+            The certificate passed all verification checks. You may recommend the institution
+            directly to SCDE without scheduling a physical inspection.
+          </p>
+
+          <p *ngIf="certificateStatus === 'Invalid'">
+            The certificate failed verification. A physical inspection is required.
+          </p>
+
+          <p *ngIf="certificateStatus === 'Missing'">
+            The certificate is missing. A physical inspection is required.
+          </p>
+
+          <p *ngIf="institution.certificateReviewNotes">
+            <strong>Review remarks:</strong> {{ institution.certificateReviewNotes }}
+          </p>
+        </div>
+      </section>
+
+      <!-- VALID CERTIFICATE: FAST-TRACK PATH -->
+
+      <section
+        class="content-card"
+        *ngIf="certificateStatus === 'Valid' &&
+               physicalInspectionStatus === 'NotRequired' &&
+               !hasSubmittedReport">
+
+        <div class="section-heading">
+          <div>
+            <h2>Recommend to SCDE</h2>
+            <p>The certificate is valid. A physical inspection is not required.</p>
+          </div>
+
+          <span class="status status-approved">Fast-track eligible</span>
+        </div>
+
+        <div class="info-message">
+          You can submit your recommendation directly to SCDE. Remarks are optional.
+        </div>
+
+        <div class="form-group">
+          <label>Remarks (optional)</label>
+          <textarea
+            [(ngModel)]="reportSummary"
+            rows="4"
+            placeholder="Enter any additional remarks about the certificate review.">
+          </textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Recommendation</label>
+          <select [(ngModel)]="recommendation">
+            <option value="Approve">Recommend Approval</option>
+            <option value="Reject">Recommend Rejection</option>
+          </select>
+        </div>
+
+        <button
+          type="button"
+          class="submit-button"
+          (click)="submitReport()"
+          [disabled]="saving">
+          {{ saving ? 'Submitting...' : 'Submit Recommendation to SCDE' }}
+        </button>
+      </section>
+
+      <!-- PHYSICAL INSPECTION -->
+
+      <section class="content-card" *ngIf="showPhysicalInspection">
+
+        <div class="section-heading">
+          <div>
+            <h2>Physical Inspection</h2>
+            <p>
+              A physical inspection is required because the certificate is
+              {{ certificateStatus === 'Missing' ? 'missing' : 'invalid' }}.
+            </p>
+          </div>
+
+          <span
+            class="status"
+            [ngClass]="{
+              'status-pending': physicalInspectionStatus === 'Required',
+              'status-warning': physicalInspectionStatus === 'Scheduled',
+              'status-approved': physicalInspectionStatus === 'Completed'
+            }">
+            {{ physicalInspectionStatus }}
+          </span>
+        </div>
+
+        <div *ngIf="physicalInspectionStatus === 'Required' && !hasSubmittedReport">
+
+          <h3>Schedule Physical Inspection</h3>
+
+          <div class="form-group">
+            <label>Inspection Date and Time</label>
+            <input type="datetime-local" [(ngModel)]="scheduledAt">
+          </div>
+
+          <div class="form-group">
+            <label>Scheduling Notes</label>
+            <textarea
+              [(ngModel)]="scheduleNotes"
+              rows="3"
+              placeholder="Enter inspection arrangements or additional details.">
+            </textarea>
+          </div>
+
+          <button
+            type="button"
+            class="primary-button"
+            (click)="scheduleInspection()"
+            [disabled]="saving || !scheduledAt">
+            {{ saving ? 'Scheduling...' : 'Schedule Physical Inspection' }}
+          </button>
+        </div>
+
+        <div *ngIf="physicalInspectionStatus === 'Scheduled'">
+
+          <div class="inspection-information">
+            <p><strong>Scheduled date:</strong> {{ scheduledDateDisplay }}</p>
+
+            <p *ngIf="institution.scheduleNotes">
+              <strong>Scheduling notes:</strong> {{ institution.scheduleNotes }}
+            </p>
+          </div>
+
+          <div *ngIf="!hasSubmittedReport" class="form-section">
+            <h3>Upload Inspection Evidence</h3>
+            <p>Upload photographs, documents or other supporting evidence from the inspection.</p>
+
+            <div class="form-group">
+              <label>Select Evidence File</label>
+              <input type="file" (change)="onFileSelected($event)">
+            </div>
+
+            <button
+              type="button"
+              class="primary-button"
+              (click)="uploadEvidence()"
+              [disabled]="saving || !selectedFile">
+              {{ saving ? 'Uploading...' : 'Upload Evidence' }}
+            </button>
+          </div>
+
+          <div class="evidence-list" *ngIf="evidenceFiles.length > 0">
+            <h3>Uploaded Evidence</h3>
+
+            <div class="evidence-item" *ngFor="let evidence of evidenceFiles">
+              {{ evidence.fileName || evidence.originalFileName || evidence.name || 'Uploaded evidence' }}
+            </div>
+          </div>
+
+          <div *ngIf="evidenceFiles.length === 0" class="info-message">
+            Upload at least one evidence file before completing the inspection.
+          </div>
+
+          <button
+            *ngIf="!hasSubmittedReport"
+            type="button"
+            class="success-button"
+            (click)="completeInspection()"
+            [disabled]="saving || evidenceFiles.length === 0">
+            {{ saving ? 'Saving...' : 'Mark Physical Inspection as Completed' }}
+          </button>
+        </div>
+
+        <div *ngIf="physicalInspectionStatus === 'Completed'">
+          <div class="completed-message">
+            <strong>Physical inspection completed.</strong>
+            <p>You can now complete the inspection report and submit your recommendation to SCDE.</p>
+          </div>
+
+          <div class="evidence-list" *ngIf="evidenceFiles.length > 0">
+            <h3>Inspection Evidence</h3>
+
+            <div class="evidence-item" *ngFor="let evidence of evidenceFiles">
+              {{ evidence.fileName || evidence.originalFileName || evidence.name || 'Uploaded evidence' }}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PHYSICAL INSPECTION REPORT -->
+
+      <section
+        class="content-card"
+        *ngIf="showPhysicalInspection &&
+               physicalInspectionStatus === 'Completed' &&
+               !hasSubmittedReport">
+
+        <div class="section-heading">
+          <div>
+            <h2>Inspection Report and Recommendation</h2>
+            <p>Complete your findings and submit the report to SCDE.</p>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Inspection Report Summary *</label>
+          <textarea
+            [(ngModel)]="reportSummary"
+            rows="5"
+            placeholder="Summarise the physical inspection and the institution's compliance.">
+          </textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Inspection Findings</label>
+          <textarea
+            [(ngModel)]="reportFindings"
+            rows="5"
+            placeholder="Record detailed observations and findings from the inspection.">
+          </textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Recommendation *</label>
+          <select [(ngModel)]="recommendation">
+            <option value="Approve">Recommend Approval</option>
+            <option value="Reject">Recommend Rejection</option>
+          </select>
+        </div>
+
+        <button
+          type="button"
+          class="submit-button"
+          (click)="submitReport()"
+          [disabled]="saving || !reportSummary.trim() || evidenceFiles.length === 0">
+          {{ saving ? 'Submitting...' : 'Submit Inspection Report to SCDE' }}
+        </button>
+      </section>
+
+      <!-- REPORT SUBMISSION CONFIRMATION -->
+
+      <section class="content-card" *ngIf="hasSubmittedReport">
+        <div class="completed-message">
+          <h2>Report Submitted</h2>
+          <p>
+            You have already submitted your recommendation to SCDE.
+            No further changes can be made from this page.
+          </p>
+        </div>
+      </section>
+
+    </ng-container>
+  </main>
+</div>

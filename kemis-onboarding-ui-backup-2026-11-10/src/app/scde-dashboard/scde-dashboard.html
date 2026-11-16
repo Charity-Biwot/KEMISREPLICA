@@ -1,0 +1,176 @@
+
+<div class="dashboard">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">K</div>
+      <div>
+        <h2>KEMIS</h2>
+        <span>Education Management</span>
+      </div>
+    </div>
+
+    <div class="user-profile">
+      <div class="avatar">SC</div>
+      <div>
+        <strong>{{ userName }}</strong>
+        <span>{{ county || 'Sub County Director' }}</span>
+      </div>
+    </div>
+
+    <nav class="navigation">
+      <p class="nav-heading">MAIN MENU</p>
+
+      <a class="nav-item active" href="javascript:void(0)">
+        <span>▦</span> Dashboard
+      </a>
+
+      <a class="nav-item" href="#institutions">
+        <span>▤</span> Institution Applications
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="footer-icon">●</div>
+      <div>
+        <strong>KEMIS Portal</strong>
+        <span>Education Management</span>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+
+    <header class="topbar">
+      <div>
+        <div class="breadcrumb">Home / SCDE Dashboard</div>
+        <h1>SCDE Dashboard</h1>
+      </div>
+
+      <div class="topbar-actions">
+        <div class="top-user">
+          <div class="avatar small">SC</div>
+          <div>
+            <strong>{{ userName }}</strong>
+            <span>Sub County Director</span>
+          </div>
+        </div>
+
+        <button class="logout-button" (click)="logout()">
+          Logout
+        </button>
+      </div>
+    </header>
+
+    <section class="welcome-section">
+      <div>
+        <h2>Welcome, {{ userName }}</h2>
+        <p>
+          Review institution applications and assign Quality Assurance Officers.
+        </p>
+      </div>
+
+      <button class="refresh-button"
+              (click)="loadInstitutions()"
+              [disabled]="loading">
+        {{ loading ? 'Loading...' : '↻ Refresh' }}
+      </button>
+    </section>
+
+    <section class="institution-section" id="institutions">
+
+      <div class="section-heading">
+        <div>
+          <h2>Assigned Institutions</h2>
+          <p>Institutions assigned to you by the CDE.</p>
+        </div>
+
+        <span class="count-label">
+          {{ institutions.length }} Institutions
+        </span>
+      </div>
+
+      <div class="message error" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <div class="message success" *ngIf="message">
+        {{ message }}
+      </div>
+
+      <div class="loading-state" *ngIf="loading">
+        Loading assigned institutions...
+      </div>
+
+      <div class="empty-state"
+           *ngIf="!loading && !errorMessage && institutions.length === 0">
+        <h3>No assigned institutions</h3>
+        <p>There are currently no institutions assigned to your account.</p>
+      </div>
+
+      <div class="table-container"
+           *ngIf="!loading && institutions.length > 0">
+
+        <table>
+          <thead>
+            <tr>
+              <th>Institution Name</th>
+              <th>UIC</th>
+              <th>County</th>
+              <th>Sub County</th>
+              <th>Application Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let institution of institutions">
+              <td>{{ institution.name }}</td>
+              <td>{{ institution.uic }}</td>
+              <td>{{ institution.county }}</td>
+              <td>{{ institution.subCounty }}</td>
+              <td>
+                {{ institution.approvalStartedAt
+                  ? (institution.approvalStartedAt | date:'mediumDate')
+                  : '—' }}
+              </td>
+
+              <td>
+                <button
+                  type="button"
+                  class="view-button"
+                  title="View institution details"
+                  aria-label="View institution details"
+                  (click)="viewDetails(institution)">
+
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="21"
+                    height="21"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round">
+
+                    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/>
+                    <circle cx="12" cy="12" r="3"/>
+
+                  </svg>
+
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </section>
+
+    <footer class="dashboard-footer">
+      KEMIS — Kenya Education Management Information System
+    </footer>
+
+  </main>
+</div>

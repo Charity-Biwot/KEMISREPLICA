@@ -23,26 +23,84 @@ public class ScdeController : ControllerBase
     private Guid UserId =>
         Guid.Parse(User.FindFirstValue("sub")!);
 
-    // View institutions assigned to this SCDE.
+    // GET: api/scde/institutions
     [HttpGet("institutions")]
-    public Task<List<PendingInstitutionDto>> Institutions(
-        CancellationToken ct) =>
-        _workflow.GetScdeAssignedAsync(UserId, ct);
+    public async Task<IActionResult> Institutions(
+        CancellationToken ct)
+    {
+        var result = await _workflow.GetScdeAssignedAsync(UserId, ct);
+        return Ok(result);
+    }
 
-    // View details of an assigned institution.
+    // GET: api/scde/institutions/{id}
     [HttpGet("institutions/{id:int}")]
-    public Task<InstitutionDetailDto> Detail(
-        int id, CancellationToken ct) =>
-        _workflow.GetScdeDetailAsync(id, UserId, ct);
+    public async Task<IActionResult> Detail(
+        int id,
+        CancellationToken ct)
+    {
+        var result = await _workflow.GetScdeDetailAsync(id, UserId, ct);
+        return Ok(result);
+    }
 
-    // View available QASOs.
+    // GET: api/scde/qasos
     [HttpGet("qasos")]
-    public Task<List<UserSummary>> Qasos(CancellationToken ct) =>
-        _workflow.GetQasosAsync(UserId, ct);
+    public async Task<IActionResult> Qasos(
+        CancellationToken ct)
+    {
+        var result = await _workflow.GetQasosAsync(UserId, ct);
+        return Ok(result);
+    }
 
-    // Assign a QASO to an institution.
+    // POST: api/scde/institutions/{id}/assign-qaso
     [HttpPost("institutions/{id:int}/assign-qaso")]
-    public Task<InstitutionDetailDto> AssignQaso(
-        int id, AssignRequest req, CancellationToken ct) =>
-        _workflow.AssignQasoAsync(id, UserId, req, ct);
+    public async Task<IActionResult> AssignQaso(
+        int id,
+        [FromBody] AssignRequest req,
+        CancellationToken ct)
+    {
+        var result = await _workflow.AssignQasoAsync(
+            id,
+            UserId,
+            req,
+            ct);
+
+        return Ok(result);
+    }
+
+    // POST: api/scde/institutions/{id}/review-qaso-report
+    [HttpPost("institutions/{id:int}/review-qaso-report")]
+    public async Task<IActionResult> ReviewQasoReport(
+        int id,
+        [FromBody] CommentRequest req,
+        CancellationToken ct)
+    {
+        var result = await _workflow.ReviewQasoReportAsync(
+            id,
+            UserId,
+            req,
+            ct);
+
+        return Ok(result);
+    }
+
+    // POST: api/scde/institutions/{id}/reports
+    [HttpPost("institutions/{id:int}/reports")]
+    public async Task<IActionResult> SubmitReport(
+        int id,
+        [FromBody] SubmitReportRequest req,
+        CancellationToken ct)
+    {
+        if (req.InstitutionId != id)
+        {
+            return BadRequest("Institution ID does not match.");
+        }
+
+        var result = await _workflow.SubmitReportAsync(
+            UserId,
+            AppRoles.SCDE,
+            req,
+            ct);
+
+        return Ok(result);
+    }
 }

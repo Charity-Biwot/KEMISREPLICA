@@ -42,8 +42,16 @@ export interface Report {
   type: string;
   authorName: string;
   summary: string;
+  findings?: string | null;
   recommendation: string;
   submittedAt: string;
+}
+
+export interface SubmitReportRequest {
+  institutionId: number;
+  summary: string;
+  findings: string;
+  recommendation: 'Approve' | 'Reject' | 'NeedsCorrection';
 }
 
 export interface Comment {
@@ -52,6 +60,11 @@ export interface Comment {
   authorName: string;
   text: string;
   createdAt: string;
+}
+
+export interface ReviewQasoReportRequest {
+  reportId?: string | null;
+  text: string;
 }
 
 export interface InstitutionDetail {
@@ -114,6 +127,26 @@ export class ScdeService {
   ): Observable<InstitutionDetail> {
     return this.http.post<InstitutionDetail>(
       `${this.apiUrl}/institutions/${institutionId}/assign-qaso`,
+      request
+    );
+  }
+
+  reviewQasoReport(
+    institutionId: number,
+    request: ReviewQasoReportRequest
+  ): Observable<InstitutionDetail> {
+    return this.http.post<InstitutionDetail>(
+      `${this.apiUrl}/institutions/${institutionId}/review-qaso-report`,
+      request
+    );
+  }
+
+  submitRecommendation(
+    institutionId: number,
+    request: SubmitReportRequest
+  ): Observable<Report> {
+    return this.http.post<Report>(
+      `${this.apiUrl}/institutions/${institutionId}/reports`,
       request
     );
   }

@@ -1,4 +1,10 @@
-import { Component, OnInit, ChangeDetectorRef, HostListener } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  HostListener
+} from '@angular/core';
+
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
@@ -14,6 +20,7 @@ import { AuthService } from '../services/auth.service';
   templateUrl: './cde-dashboard.html',
 })
 export class CdeDashboard implements OnInit {
+
   pending: PendingInstitution[] = [];
   summary: DashboardSummary | null = null;
 
@@ -44,6 +51,7 @@ export class CdeDashboard implements OnInit {
     if (typeof localStorage === 'undefined') return;
 
     const storedUser = localStorage.getItem('kemis_user');
+
     if (!storedUser) return;
 
     try {
@@ -77,13 +85,17 @@ export class CdeDashboard implements OnInit {
     this.cdeService.getPending().subscribe({
       next: data => {
         console.log('Pending institutions received:', data);
+
         this.pending = Array.isArray(data) ? data : [];
+
         console.log('Pending institutions count:', this.pending.length);
+
         this.loading = false;
         this.cdr.markForCheck();
       },
       error: error => {
         console.error('Error loading pending institutions:', error);
+
         this.pending = [];
         this.loading = false;
 
@@ -116,6 +128,7 @@ export class CdeDashboard implements OnInit {
     const approved = this.summary?.approved ?? 0;
     const rejected = this.summary?.rejected ?? 0;
     const pending = this.summary?.pending ?? this.pending.length;
+
     const total = approved + rejected + pending;
 
     if (!total || value == null || value <= 0) {
@@ -123,6 +136,7 @@ export class CdeDashboard implements OnInit {
     }
 
     const percentage = (value / total) * 100;
+
     return `${Math.min(percentage, 100)}%`;
   }
 
@@ -154,11 +168,20 @@ export class CdeDashboard implements OnInit {
     this.router.navigate(['/cde-institution-approval']);
   }
 
+  // NEW: Approved institutions page
+  openApprovedInstitutions(): void {
+    this.router.navigate(['/cde-approved-institutions']);
+  }
+
+  // NEW: Rejected institutions page
+  openRejectedInstitutions(): void {
+    this.router.navigate(['/cde-rejected-institutions']);
+  }
+
   toggleUserMenu(): void {
     this.isUserMenuOpen = !this.isUserMenuOpen;
   }
 
-  // Closes the caret dropdown when the user clicks anywhere else on the page
   @HostListener('document:click')
   closeUserMenu(): void {
     this.isUserMenuOpen = false;

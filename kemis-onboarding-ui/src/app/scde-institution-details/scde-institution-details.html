@@ -32,7 +32,6 @@
   <main class="main-content">
 
     <header class="topbar">
-
       <div>
         <h2>Institution Details</h2>
         <p>Review institution information and manage QASO assignment.</p>
@@ -41,7 +40,6 @@
       <button class="back-button" (click)="goBack()">
         Back to Dashboard
       </button>
-
     </header>
 
     <!-- LOADING -->
@@ -66,7 +64,6 @@
       <section class="institution-card">
 
         <div class="section-heading">
-
           <div>
             <h3>{{ inst.name }}</h3>
             <p>Institution registration information</p>
@@ -75,7 +72,6 @@
           <span class="status">
             {{ inst.status }}
           </span>
-
         </div>
 
         <div class="details-grid">
@@ -177,7 +173,6 @@
       <section class="institution-card">
 
         <div class="section-heading">
-
           <div>
             <h3>QASO Assignment</h3>
             <p>
@@ -185,7 +180,6 @@
               to inspect this institution.
             </p>
           </div>
-
         </div>
 
         <div *ngIf="assignedQaso" class="alert success">
@@ -201,7 +195,6 @@
           <ng-container *ngIf="!loadingQasos">
 
             <div class="form-group">
-
               <label for="qaso">Select QASO Officer</label>
 
               <select
@@ -222,7 +215,6 @@
                 </option>
 
               </select>
-
             </div>
 
             <button
@@ -255,7 +247,6 @@
 
             <div>
               <strong>{{ assignment.assignedToName }}</strong>
-
               <small>
                 {{ assignment.role }} · {{ assignment.status }}
               </small>
@@ -292,6 +283,12 @@
           <div>
             <strong>{{ report.type }}</strong>
             <p>{{ report.summary }}</p>
+
+            <p *ngIf="report.findings">
+              <strong>Findings:</strong>
+              {{ report.findings }}
+            </p>
+
             <small>Submitted by: {{ report.authorName }}</small>
           </div>
 
@@ -299,6 +296,243 @@
             <strong>{{ report.recommendation }}</strong>
             <small>{{ report.submittedAt | date:'medium' }}</small>
           </div>
+
+        </div>
+
+      </section>
+
+      <!-- QASO REPORT REVIEW -->
+      <section class="institution-card">
+
+        <div class="section-heading">
+          <div>
+            <h3>QASO Inspection Report Review</h3>
+            <p>
+              Review the inspection findings and record your
+              observations before making your recommendation to CDE.
+            </p>
+          </div>
+
+          <span class="status" *ngIf="qasoReportSubmitted">
+            Report Submitted
+          </span>
+        </div>
+
+        <!-- WAITING FOR QASO -->
+        <div *ngIf="!qasoReportSubmitted" class="alert error">
+          The QASO inspection report has not yet been submitted.
+          You can review it once the assigned QASO completes the report.
+        </div>
+
+        <!-- DISPLAY QASO REPORT -->
+        <div *ngIf="qasoReport as report" class="report-review">
+
+          <div class="details-grid">
+
+            <div class="detail-item">
+              <label>Report Type</label>
+              <strong>{{ report.type }}</strong>
+            </div>
+
+            <div class="detail-item">
+              <label>Submitted By</label>
+              <strong>{{ report.authorName }}</strong>
+            </div>
+
+            <div class="detail-item">
+              <label>Submission Date</label>
+              <strong>{{ report.submittedAt | date:'medium' }}</strong>
+            </div>
+
+            <div class="detail-item">
+              <label>Recommendation</label>
+              <strong>{{ report.recommendation }}</strong>
+            </div>
+
+          </div>
+
+          <div class="form-group">
+            <label>QASO Report Summary</label>
+            <p>{{ report.summary }}</p>
+          </div>
+
+          <div class="form-group" *ngIf="report.findings">
+            <label>QASO Findings</label>
+            <p>{{ report.findings }}</p>
+          </div>
+
+          <div class="form-group">
+            <label for="qasoReviewComment">
+              SCDE Review Comments
+            </label>
+
+            <textarea
+              id="qasoReviewComment"
+              name="qasoReviewComment"
+              rows="5"
+              [(ngModel)]="qasoReviewComment"
+              [disabled]="submittingQasoReview"
+              placeholder="Enter your observations and comments on the QASO inspection report...">
+            </textarea>
+          </div>
+
+          <button
+            class="assign-button"
+            (click)="reviewQasoReport()"
+            [disabled]="
+              submittingQasoReview ||
+              !qasoReviewComment.trim()
+            ">
+
+            {{
+              submittingQasoReview
+                ? 'Submitting Review...'
+                : 'Submit QASO Report Review'
+            }}
+
+          </button>
+
+          <!-- PREVIOUS REVIEW COMMENTS -->
+          <div class="assignment-list">
+
+            <h4>Previous SCDE Review Comments</h4>
+
+            <div
+              *ngIf="qasoReviewComments.length === 0"
+              class="empty-message">
+
+              No SCDE review comments have been recorded for this report.
+
+            </div>
+
+            <div
+              *ngFor="let comment of qasoReviewComments"
+              class="comment-row">
+
+              <strong>{{ comment.authorName }}</strong>
+              <p>{{ comment.text }}</p>
+
+              <small>
+                {{ comment.createdAt | date:'medium' }}
+              </small>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- SCDE FINDINGS AND RECOMMENDATION -->
+      <section class="institution-card">
+
+        <div class="section-heading">
+          <div>
+            <h3>SCDE Findings and Recommendation</h3>
+            <p>
+              Record your findings and submit your recommendation
+              to the CDE after reviewing the QASO inspection report.
+            </p>
+          </div>
+        </div>
+
+        <!-- WAITING FOR QASO REPORT -->
+        <div
+          *ngIf="!qasoReportSubmitted && !scdeRecommendationSubmitted"
+          class="alert error">
+
+          You cannot submit your recommendation yet.
+          The assigned QASO must first complete and submit
+          the institution inspection report.
+
+        </div>
+
+        <!-- ALREADY SUBMITTED -->
+        <div
+          *ngIf="scdeRecommendationSubmitted"
+          class="alert success">
+
+          Your SCDE recommendation has already been submitted
+          to the CDE.
+
+        </div>
+
+        <!-- RECOMMENDATION FORM -->
+        <div
+          *ngIf="canSubmitRecommendation"
+          class="assignment-form">
+
+          <div class="form-group">
+            <label for="scdeSummary">Report Summary</label>
+
+            <textarea
+              id="scdeSummary"
+              name="scdeSummary"
+              rows="4"
+              [(ngModel)]="scdeSummary"
+              [disabled]="submittingRecommendation"
+              placeholder="Provide a summary of your review of the QASO inspection report...">
+            </textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="scdeFindings">
+              SCDE Findings and Observations
+            </label>
+
+            <textarea
+              id="scdeFindings"
+              name="scdeFindings"
+              rows="5"
+              [(ngModel)]="scdeFindings"
+              [disabled]="submittingRecommendation"
+              placeholder="Record your findings, observations and any issues identified during your review...">
+            </textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="scdeRecommendation">
+              Recommendation to CDE
+            </label>
+
+            <select
+              id="scdeRecommendation"
+              name="scdeRecommendation"
+              [(ngModel)]="scdeRecommendation"
+              [disabled]="submittingRecommendation">
+
+              <option value="">-- Select Recommendation --</option>
+              <option value="Approve">Recommend Approval</option>
+              <option value="Reject">Recommend Rejection</option>
+              <option value="NeedsCorrection">Needs Correction</option>
+
+            </select>
+          </div>
+
+          <button
+            class="assign-button"
+            (click)="submitRecommendation()"
+            [disabled]="
+              submittingRecommendation ||
+              !scdeSummary.trim() ||
+              !scdeFindings.trim() ||
+              !scdeRecommendation
+            ">
+
+            {{
+              submittingRecommendation
+                ? 'Submitting Recommendation...'
+                : 'Submit Recommendation to CDE'
+            }}
+
+          </button>
+
+          <p class="empty-message">
+            Note: This is an SCDE recommendation only.
+            The CDE retains the authority to make the final
+            institution approval or rejection decision.
+          </p>
 
         </div>
 
@@ -322,7 +556,6 @@
           class="comment-row">
 
           <strong>{{ comment.authorName }}</strong>
-
           <p>{{ comment.text }}</p>
 
           <small>

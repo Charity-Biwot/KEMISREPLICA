@@ -1,0 +1,41 @@
+<div class="app">
+
+  <aside class="side">
+    <div class="brand"><span class="mark">K</span><span class="word">KEMIS</span></div>
+
+    <nav aria-label="Main menu">
+      <a routerLink="/cde-dashboard" routerLinkActive="active">Dashboard</a>
+
+      <span class="soon" *ngFor="let m of soon">
+        {{ m }} <small>Soon</small>
+      </span>
+    </nav>
+  </aside>
+
+  <div class="main">
+    <header class="top">
+      <p class="context">
+        You are currently accessing <strong>{{ county || 'your' }} County</strong>
+      </p>
+
+      <div class="who">
+        <span class="alerts" [attr.aria-label]="unread + ' unread notifications'">
+          Notifications
+          <span class="badge" *ngIf="unread > 0">{{ unread }}</span>
+        </span>
+
+        <span class="user">
+          <strong>{{ userName }}</strong>
+          <small>{{ role }}</small>
+        </span>
+
+        <button type="button" class="logout" (click)="logout()">Sign out</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <router-outlet />
+    </main>
+  </div>
+
+</div>

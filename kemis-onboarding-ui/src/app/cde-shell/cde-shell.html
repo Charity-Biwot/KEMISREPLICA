@@ -1,41 +1,128 @@
+
 <div class="app">
 
-  <aside class="side">
-    <div class="brand"><span class="mark">K</span><span class="word">KEMIS</span></div>
+  <!-- SHARED CDE SIDEBAR WITH ORIGINAL ICONS -->
+  <aside class="dashboard-sidebar">
 
-    <nav aria-label="Main menu">
-      <a routerLink="/cde-dashboard" routerLinkActive="active">Dashboard</a>
+    <div class="sidebar-brand">
+      <img src="/images/image.png"
+           alt="Republic of Kenya coat of arms" />
+    </div>
 
-      <span class="soon" *ngFor="let m of soon">
-        {{ m }} <small>Soon</small>
-      </span>
+    <nav class="sidebar-navigation" aria-label="CDE main navigation">
+
+      <a routerLink="/cde-dashboard"
+         routerLinkActive="active"
+         [routerLinkActiveOptions]="{ exact: true }"
+         class="nav-item">
+
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M3 3h8v10H3zM13 3h8v6h-8zM13 11h8v10h-8zM3 15h8v6H3z"/>
+        </svg>
+        <span>Dashboard</span>
+      </a>
+
+      <a class="nav-item coming-soon" aria-disabled="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="10" cy="10" r="6"
+                  fill="none" stroke="currentColor" stroke-width="3"/>
+          <path d="M15 15l6 6"
+                stroke="currentColor" stroke-width="3"
+                stroke-linecap="round"/>
+        </svg>
+        <span>Menu Search</span>
+      </a>
+
+      <a class="nav-item coming-soon" aria-disabled="true">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M9 2h6v3H9z"/>
+          <path fill-rule="evenodd"
+                d="M6 4h2v3h8V4h2a1 1 0 011 1v16a1 1 0 01-1 1H6a1 1 0 01-1-1V5a1 1 0 011-1zm2 8h2v2H8zm4 0h5v2h-5zm-4 4h2v2H8zm4 0h5v2h-5z"/>
+        </svg>
+        <span>KEMIS Reports</span>
+      </a>
+
+      <a class="nav-item coming-soon" aria-disabled="true">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M2 5h20v2l-10 7L2 7z"/>
+          <path d="M2 9.5l10 7 10-7V19H2z"/>
+        </svg>
+        <span>Escalations</span>
+      </a>
+
+      <a class="nav-item coming-soon" aria-disabled="true">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M5 2h9l4 4v5h-2V8h-4V4H7v16h5v2H5z"/>
+          <path d="M20.7 12.3l1 1a1 1 0 010 1.4L14 22l-3 .5.5-3 7.8-7.2a1 1 0 011.4 0z"/>
+        </svg>
+        <span>Registration</span>
+      </a>
+
+      <a class="user-manual" aria-disabled="true">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M3 4h8a1 1 0 011 1v15a3 3 0 00-3-2H3zM21 4h-8a1 1 0 00-1 1v15a3 3 0 013-2h6z"/>
+        </svg>
+        <span>User Manual</span>
+      </a>
+
     </nav>
   </aside>
 
+  <!-- SHARED MAIN AREA -->
   <div class="main">
+
+    <!-- ONE SHARED TOP BAR -->
     <header class="top">
-      <p class="context">
-        You are currently accessing <strong>{{ county || 'your' }} County</strong>
-      </p>
+
+      <div class="top-context">
+        <div class="context-marquee">
+          <span>
+            You are Currently accessing {{ selectedLevel }} Information
+          </span>
+        </div>
+
+        <div class="level-selectors">
+          <select aria-label="Education level"
+                  [value]="selectedLevel"
+                  (change)="onLevelChange($event)">
+
+            <option *ngFor="let level of educationLevels"
+                    [value]="level">
+              {{ level }}
+            </option>
+
+          </select>
+        </div>
+      </div>
 
       <div class="who">
-        <span class="alerts" [attr.aria-label]="unread + ' unread notifications'">
+
+        <span class="alerts"
+              [attr.aria-label]="unread + ' unread notifications'">
           Notifications
-          <span class="badge" *ngIf="unread > 0">{{ unread }}</span>
+          <span class="badge" *ngIf="unread > 0">
+            {{ unread }}
+          </span>
         </span>
 
         <span class="user">
           <strong>{{ userName }}</strong>
-          <small>{{ role }}</small>
+          <small>{{ county || 'County' }} County</small>
         </span>
 
-        <button type="button" class="logout" (click)="logout()">Sign out</button>
+        <button type="button"
+                class="logout"
+                (click)="logout()">
+          Sign Out
+        </button>
+
       </div>
     </header>
 
+    <!-- ALL CDE MODULES LOAD HERE -->
     <main class="content">
-      <router-outlet />
+      <router-outlet></router-outlet>
     </main>
-  </div>
 
+  </div>
 </div>
