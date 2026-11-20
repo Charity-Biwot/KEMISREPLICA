@@ -34,6 +34,13 @@ export class CdeShell implements OnInit {
   county = '';
   unread = 0;
 
+  // Sidebar collapse state
+  sidebarCollapsed = false;
+
+  toggleSidebar(): void {
+    this.sidebarCollapsed = !this.sidebarCollapsed;
+  }
+
   // Education levels available in the top-bar dropdown.
   educationLevels: string[] = [
     'Junior School',
@@ -86,7 +93,6 @@ export class CdeShell implements OnInit {
 
     this.selectedLevel = select.value;
 
-    // The shared shell remains active while navigating between CDE pages.
     this.cdr.detectChanges();
   }
 

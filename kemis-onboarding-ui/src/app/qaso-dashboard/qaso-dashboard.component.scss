@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
 /* =========================================================
-   KEMIS DESIGN TOKENS (taken from training.kemis.go.ke)
+   KEMIS DESIGN TOKENS
 ========================================================= */
 
 :host {
@@ -40,13 +40,13 @@ button {
 }
 
 /* =========================================================
-   SIDEBAR (static, white, blue items, red only when clicked)
+   SIDEBAR
 ========================================================= */
 
 .sidebar {
   position: sticky;
   top: 0;
-  z-index: 1002;               /* keeps the pinned profile above the top bar */
+  z-index: 1002;
   align-self: flex-start;
   width: 260px;
   min-width: 260px;
@@ -60,7 +60,6 @@ button {
   color: var(--kemis-text);
 }
 
-/* Logo block, same height as the top bar */
 .brand {
   width: 100%;
   height: 100px;
@@ -80,13 +79,11 @@ button {
   margin: 0 auto;
 }
 
-/* hide the "KEMIS / Institution Management System" text */
 .brand h2,
 .brand span {
   display: none;
 }
 
-/* logo circle drawn in CSS (swap for the coat of arms if you like) */
 .brand::before {
   content: 'K';
   width: 60px;
@@ -99,12 +96,8 @@ button {
   color: var(--kemis-red);
   font-size: 28px;
   font-weight: 700;
-  /* coat of arms: add the image to src/assets, then replace the lines above with
-     content: ''; width: 64px; height: 72px; border: 0; border-radius: 0;
-     background: url('/assets/coat-of-arms.png') center / contain no-repeat; */
 }
 
-/* Menu modules: large, blue, static */
 .sidebar nav {
   order: 2;
   display: flex;
@@ -133,7 +126,6 @@ button {
   outline: none;
 }
 
-/* icon above the label */
 .sidebar nav a::before {
   content: '';
   display: block;
@@ -145,24 +137,20 @@ button {
   background-size: contain;
 }
 
-/* 1st link: Dashboard (grid icon) */
 .sidebar nav a:nth-of-type(1)::before {
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300AEEF'><path d='M3 3h8v10H3zM13 3h8v6h-8zM13 11h8v10h-8zM3 15h8v6H3z'/></svg>");
 }
 
-/* 2nd link: Assigned Institutions (clipboard icon) */
 .sidebar nav a:nth-of-type(2)::before {
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300AEEF' fill-rule='evenodd'><path d='M9 2h6a1 1 0 0 1 1 1v1h3a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3V3a1 1 0 0 1 1-1zm1 2v2h4V4h-4zM8 11h8v2H8v-2zm0 4h8v2H8v-2z'/></svg>");
 }
 
-/* the "active" class in the HTML is ignored: items stay blue */
 .sidebar nav a.active {
   background: transparent;
   color: var(--kemis-blue);
   font-weight: 500;
 }
 
-/* red only while clicked */
 .sidebar nav a:active,
 .sidebar nav a:focus {
   background: var(--kemis-red);
@@ -171,91 +159,332 @@ button {
 }
 
 /* =========================================================
-   TOP-RIGHT PROFILE + POWER ICON (one avatar, one sign out)
+   NEW CDE-STYLE QASO TOP BAR
 ========================================================= */
 
-.user-profile {
+/* White top-bar background */
+.main-content::before {
+  content: '';
   position: fixed;
   top: 0;
-  right: 66px;
+  left: 260px;
+  right: 0;
   height: 80px;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+/* Main top-bar container */
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 260px;
+  right: 0;
   z-index: 1001;
+
+  height: 80px;
+  margin: 0;
+  padding: 0 24px;
+
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin: 0;
-  padding: 0;
+  justify-content: space-between;
+  gap: 20px;
+
+  background: transparent;
   border: 0;
 }
 
-.user-profile strong {
+/* Announcement area: red chevron + scrolling bold sentence */
+.top-context {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow: hidden;
+}
+
+.top-context::before {
+  content: '';
+  flex: 0 0 14px;
+  height: 22px;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23B71C1C' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><path d='M15 4l-8 8 8 8'/></svg>") center / contain no-repeat;
+}
+
+.context-marquee {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.context-marquee span {
+  display: inline-block;
+  width: max-content;
+  padding-left: 100%;
+  animation: qaso-announcement-scroll 8s linear infinite;
+  color: #1a1a1a;
+  font-size: 16px;
+  font-weight: 600;
+  will-change: transform;
+}
+
+@keyframes qaso-announcement-scroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+/* Right-side top-bar controls
+   Order: level select, chevron box, notifications, user, power menu */
+.who {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+/* Education-level selector */
+.level-select {
+  order: 1;
+  -webkit-appearance: none;
+  appearance: none;
+
+  height: 40px;
+  min-width: 185px;
+  padding: 0 34px 0 14px;
+
+  border: 1px solid #dcdcdc;
+  border-radius: 5px;
+  outline: none;
+
+  background-color: #ffffff;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333333' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 11px center;
+  background-size: 14px;
+
+  color: #333333;
+
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 400;
+
+  cursor: pointer;
+}
+
+.level-select:focus {
+  border-color: var(--kemis-blue);
+}
+
+/* Narrow chevron-only box with blue outline (decorative, no HTML needed) */
+.who::before {
+  content: '';
+  order: 2;
+  width: 50px;
+  height: 40px;
+  flex-shrink: 0;
+
+  border: 2px solid #eaeaee;
+  border-radius: 6px;
+  box-shadow: 0 0 0 2px rgba(47, 69, 197, 0.2);
+
+  background: #ffffff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333333' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>") center / 16px no-repeat;
+}
+
+/* Notifications */
+.alerts {
+  order: 3;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  color: #555555;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.alerts svg {
+  width: 20px;
+  height: 20px;
+  color: #555555;
+  flex-shrink: 0;
+}
+
+/* QASO user information */
+.user {
+  order: 4;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.user-avatar {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+  background: #f0f0f0 url('/images/user-avatar.png') center / cover no-repeat;
+  color: transparent;
+
+  font-size: 0;
+  font-weight: 600;
+}
+
+.user-details strong {
   display: block;
   color: var(--kemis-blue);
   font-size: 14px;
   font-weight: 500;
   line-height: 1.3;
+  text-transform: uppercase;
 }
 
-.user-profile small {
+.user-details small {
   display: block;
-  margin-top: 2px;
-  color: var(--kemis-muted);
-  font-size: 13px;
+  margin-top: 1px;
+  color: #9aa0a6;
+  font-size: 14px;
+  line-height: 1.3;
 }
 
-/* small caret after the name */
-.user-profile::after {
-  content: '';
-  margin-left: 4px;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 5px solid #222222;
+/* Account dropdown: chevron and power icon attached */
+.account-menu {
+  order: 5;
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
 }
 
-.avatar {
-  width: 48px;
-  height: 48px;
-  min-width: 48px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: var(--kemis-blue-soft);
-  color: var(--kemis-blue);
-  font-size: 18px;
-  font-weight: 700;
-  /* to use a picture: put it in src/assets and add
-     background: url('/assets/avatar.png') center / cover; color: transparent; */
-}
+/* The combined dropdown trigger */
+.account-menu summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
 
-/* Logout becomes the power icon at the far right */
-.logout-button {
-  position: fixed;
-  top: 20px;
-  right: 18px;
-  z-index: 1001;
-  width: 40px;
   height: 40px;
-  margin: 0;
   padding: 0;
+
+  border: 0;
+  outline: none;
+  background: transparent;
+
+  color: #777777;
+  cursor: pointer;
+  list-style: none;
+}
+
+.account-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.account-menu summary::marker {
+  display: none;
+  content: '';
+}
+
+/* Small solid dropdown caret */
+.menu-chevron {
+  width: 10px;
+  height: 10px;
+  margin: 0 6px 0 0;
+
+  color: #222222;
+  stroke: currentColor;
+  stroke-width: 1;
+  fill: currentColor;
+
+  transition: transform 0.2s ease;
+}
+
+/* Dark power icon */
+.power-icon {
+  width: 26px;
+  height: 26px;
+
+  color: #222222;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  fill: none;
+}
+
+/* Rotate chevron when dropdown opens */
+.account-menu[open] .menu-chevron {
+  transform: rotate(180deg);
+}
+
+.account-menu summary:hover .menu-chevron,
+.account-menu summary:hover .power-icon {
+  color: #000000;
+}
+
+/* Dropdown menu */
+.account-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+
+  width: 180px;
+  padding: 7px 0;
+
+  display: flex;
+  flex-direction: column;
+
+  background: #ffffff;
+  border: 1px solid #eeeeee;
+  border-radius: 7px;
+
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.13);
+  z-index: 1100;
+}
+
+/* Dropdown links and logout */
+.account-dropdown a,
+.account-dropdown button {
+  width: 100%;
+  min-height: 40px;
+  padding: 10px 15px;
+
+  display: flex;
+  align-items: center;
+
   border: 0;
   border-radius: 0;
-  background: transparent;
-  font-size: 0;                /* hides the "Logout" text */
+  background: #ffffff;
+
+  color: #333333;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: left;
+  text-decoration: none;
+
   cursor: pointer;
 }
 
-.logout-button::before {
-  content: '';
-  display: block;
-  width: 100%;
-  height: 100%;
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23222222' stroke-width='2' stroke-linecap='round'><path d='M12 2v10'/><path d='M18.4 6.6a9 9 0 1 1-12.8 0'/></svg>") center / 26px no-repeat;
+.account-dropdown a:hover,
+.account-dropdown button:hover {
+  background: #f2faff;
+  color: var(--kemis-blue);
 }
 
-.logout-button:active,
-.logout-button:focus {
-  background: transparent;
-  outline: none;
+.account-dropdown button {
+  border-top: 1px solid #eeeeee;
 }
 
 /* =========================================================
@@ -265,74 +494,11 @@ button {
 .main-content {
   flex: 1;
   min-width: 0;
-  padding: 104px 32px 32px;    /* clears the fixed top bar */
-}
-
-/* white top bar across the screen, like KEMIS */
-.main-content::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 260px;                 /* sidebar width */
-  right: 0;
-  height: 80px;
-  background: #ffffff;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-}
-
-/* Page heading: big bold black title like "County Director Dashboard" */
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 20px;
-  margin-bottom: 26px;
-  padding: 0;
-  background: transparent;
-  border: 0;
-}
-
-.topbar h2 {
-  margin: 0;
-  color: #111111;
-  font-size: 30px;
-  font-weight: 600;
-  line-height: 1.2;
-}
-
-.topbar p {
-  margin: 8px 0 0;
-  color: var(--kemis-text);
-  font-size: 15px;
-  line-height: 1.5;
-}
-
-.refresh-button {
-  min-height: 40px;
-  padding: 9px 24px;
-  border: 1px solid var(--kemis-blue);
-  border-radius: 8px;
-  background: var(--kemis-blue);
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.refresh-button:hover:not(:disabled) {
-  background: var(--kemis-blue-dark);
-  border-color: var(--kemis-blue-dark);
-}
-
-.refresh-button:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
+  padding: 104px 32px 32px;
 }
 
 /* =========================================================
-   SUMMARY TILES (cyan gradient, white text, like KEMIS)
+   SUMMARY TILES
 ========================================================= */
 
 .summary-grid {
@@ -347,13 +513,16 @@ button {
   overflow: hidden;
   min-height: 150px;
   padding: 22px 20px;
+
   display: flex;
-  flex-direction: column-reverse;   /* number on top, label below */
+  flex-direction: column-reverse;
   justify-content: flex-end;
+
   border: 0;
   border-radius: 14px;
   background: linear-gradient(135deg, #00b4f0 0%, #0093c9 100%);
   box-shadow: 0 4px 12px rgba(0, 174, 239, 0.3);
+
   color: #ffffff;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -363,7 +532,6 @@ button {
   box-shadow: 0 8px 18px rgba(0, 174, 239, 0.4);
 }
 
-/* soft diagonal light streak */
 .summary-card::after {
   content: '';
   position: absolute;
@@ -396,7 +564,6 @@ button {
   line-height: 1.1;
 }
 
-/* white icon in the top-right corner of each tile */
 .summary-card::before {
   content: '';
   position: absolute;
@@ -427,7 +594,7 @@ button {
 }
 
 /* =========================================================
-   INSTITUTION CARD (cyan gradient header like the KEMIS charts)
+   INSTITUTION CARD
 ========================================================= */
 
 .content-card {
@@ -450,7 +617,6 @@ button {
   border: 0;
 }
 
-/* small white check-circle icon above the title */
 .section-heading h3::before {
   content: '';
   display: block;
@@ -476,7 +642,7 @@ button {
 }
 
 /* =========================================================
-   TABLE (cyan header with rounded ends, dark row borders)
+   TABLE
 ========================================================= */
 
 .table-wrapper {
@@ -515,7 +681,7 @@ th:first-child {
 
 th:last-child {
   border-radius: 0 8px 8px 0;
-  text-align: center;          /* Action header centred over the eye */
+  text-align: center;
 }
 
 td {
@@ -529,7 +695,7 @@ td {
 
 td:last-child {
   border-right: 1px solid #333333;
-  text-align: center;          /* eye centred in the Action column */
+  text-align: center;
 }
 
 tbody tr:first-child td {
@@ -593,7 +759,7 @@ td small {
 }
 
 /* =========================================================
-   ACTION BUTTON: RED EYE ICON (replaces "View Details")
+   ACTION BUTTON: RED EYE ICON
 ========================================================= */
 
 .view-button {
@@ -610,7 +776,7 @@ td small {
   background-repeat: no-repeat;
   background-position: center;
   background-size: 26px 26px;
-  color: transparent;          /* hides the "View Details" text */
+  color: transparent;
   font-size: 0;
   line-height: 0;
   overflow: hidden;
@@ -619,7 +785,7 @@ td small {
 }
 
 .view-button:hover {
-  background-color: #fde9e9;   /* soft red circle on hover */
+  background-color: #fde9e9;
 }
 
 .view-button:focus-visible {
@@ -665,6 +831,33 @@ td small {
 }
 
 /* =========================================================
+   LOGO OVERRIDE
+========================================================= */
+
+.sidebar .brand > div,
+.sidebar .brand h2,
+.sidebar .brand span,
+.sidebar .brand .brand-logo {
+  display: none;
+}
+
+.sidebar .brand::before {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+  border: none !important;
+}
+
+.sidebar .brand-img {
+  display: block !important;
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* =========================================================
    RESPONSIVE LAYOUT
 ========================================================= */
 
@@ -675,6 +868,14 @@ td small {
 
   .main-content {
     padding: 104px 24px 24px;
+  }
+
+  .who {
+    gap: 14px;
+  }
+
+  .level-select {
+    min-width: 160px;
   }
 }
 
@@ -713,53 +914,93 @@ td small {
     height: 30px;
   }
 
-  /* on small screens the top bar is off; profile and logout flow in the sidebar */
   .main-content {
-    padding: 20px;
+    padding: 100px 20px 20px;
   }
 
   .main-content::before {
-    display: none;
+    left: 0;
   }
 
-  .user-profile {
-    position: static;
-    height: auto;
-    margin-top: 12px;
-    padding: 12px 20px;
-    border-top: 1px solid #eeeeee;
+  .topbar {
+    left: 0;
+    padding: 0 18px;
   }
 
-  .user-profile::after {
-    display: none;
-  }
-
-  .logout-button {
-    position: static;
-    width: auto;
-    height: auto;
-    margin: 0 20px;
-    padding: 14px 16px;
-    border: 1px solid var(--kemis-red);
-    border-radius: 12px;
-    background: #ffffff;
-    color: var(--kemis-red);
-    font-size: 15px;
-    font-weight: 600;
-  }
-
-  .logout-button::before {
-    display: none;
+  .who {
+    gap: 12px;
   }
 }
 
 @media (max-width: 600px) {
   .main-content {
-    padding: 15px;
+    padding: 100px 15px 15px;
   }
 
   .topbar {
-    flex-direction: column;
+    height: 80px;
+    padding: 0 12px;
+    gap: 8px;
+  }
+
+  .context-marquee span {
+    font-size: 11px;
+  }
+
+  .who {
+    gap: 9px;
+  }
+
+  .who::before {
+    display: none;
+  }
+
+  .level-select {
+    min-width: 0;
+    width: 105px;
+    height: 34px;
+    padding: 0 22px 0 6px;
+    font-size: 10px;
+    background-position: right 6px center;
+    background-size: 10px;
+  }
+
+  .alerts span {
+    display: none;
+  }
+
+  .alerts svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .user {
+    gap: 5px;
+  }
+
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    font-size: 13px;
+  }
+
+  .user-details strong {
+    font-size: 10px;
+  }
+
+  .user-details small {
+    font-size: 9px;
+  }
+
+  .menu-chevron {
+    width: 12px;
+    height: 12px;
+  }
+
+  .power-icon {
+    width: 21px;
+    height: 21px;
   }
 
   .topbar h2 {
@@ -778,26 +1019,4 @@ td small {
   .table-wrapper {
     padding: 15px;
   }
-}
-.sidebar .brand > div,
-.sidebar .brand h2,
-.sidebar .brand span,
-.sidebar .brand .brand-logo {
-  display: none;
-}
-/* FINAL LOGO OVERRIDE */
-.sidebar .brand::before {
-  content: none !important;
-  display: none !important;
-  background: none !important;
-  border: none !important;
-}
-
-.sidebar .brand-img {
-  display: block !important;
-  width: 72px;
-  height: 72px;
-  object-fit: contain;
-  visibility: visible !important;
-  opacity: 1 !important;
 }

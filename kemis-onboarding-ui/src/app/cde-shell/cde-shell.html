@@ -1,5 +1,4 @@
-
-<div class="app">
+<div class="app" [class.sidebar-collapsed]="sidebarCollapsed">
 
   <!-- SHARED CDE SIDEBAR WITH ORIGINAL ICONS -->
   <aside class="dashboard-sidebar">
@@ -75,6 +74,19 @@
     <header class="top">
 
       <div class="top-context">
+
+        <!-- RED CHEVRON: slides the sidebar away and back -->
+        <button type="button"
+                class="sidebar-toggle"
+                (click)="toggleSidebar()"
+                [attr.aria-expanded]="!sidebarCollapsed"
+                [attr.aria-label]="sidebarCollapsed ? 'Show sidebar' : 'Hide sidebar'"
+                [title]="sidebarCollapsed ? 'Show sidebar' : 'Hide sidebar'">
+          <svg viewBox="0 0 14 22" aria-hidden="true">
+            <path d="M11.5 2L3 11l8.5 9"/>
+          </svg>
+        </button>
+
         <div class="context-marquee">
           <span>
             You are Currently accessing {{ selectedLevel }} Information
@@ -86,20 +98,40 @@
                   [value]="selectedLevel"
                   (change)="onLevelChange($event)">
 
+            <option *ngIf="!educationLevels?.length" disabled>
+              Loading levels...
+            </option>
+
             <option *ngFor="let level of educationLevels"
                     [value]="level">
               {{ level }}
             </option>
 
           </select>
+
+          <!-- Narrow empty select, same as the real KEMIS -->
+          <select class="level-extra" aria-label="Additional filter"></select>
         </div>
       </div>
 
       <div class="who">
 
+        <!-- NOTIFICATIONS: bell icon, same unread count from the backend -->
         <span class="alerts"
+              title="Notifications"
               [attr.aria-label]="unread + ' unread notifications'">
-          Notifications
+
+          <svg viewBox="0 0 24 24"
+               fill="none"
+               stroke="currentColor"
+               stroke-width="1.8"
+               stroke-linecap="round"
+               stroke-linejoin="round"
+               aria-hidden="true">
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+            <path d="M10 21h4"/>
+          </svg>
+
           <span class="badge" *ngIf="unread > 0">
             {{ unread }}
           </span>
@@ -110,11 +142,41 @@
           <small>{{ county || 'County' }} County</small>
         </span>
 
-        <button type="button"
-                class="logout"
-                (click)="logout()">
-          Sign Out
-        </button>
+        <!-- CARET + POWER ICON: click to open the account menu -->
+        <details class="account-menu" #accountMenu>
+
+          <summary title="Account menu" aria-label="Account menu">
+
+            <svg class="menu-chevron"
+                 viewBox="0 0 24 24"
+                 aria-hidden="true">
+              <path d="m7 10 5 5 5-5"/>
+            </svg>
+
+            <svg class="power-icon"
+                 viewBox="0 0 24 24"
+                 stroke-linecap="round"
+                 aria-hidden="true">
+              <path d="M12 3v9"/>
+              <path d="M6.3 6.8a8 8 0 1 0 11.4 0"/>
+            </svg>
+
+          </summary>
+
+          <div class="account-dropdown">
+            <a routerLink="/cde-dashboard"
+               (click)="accountMenu.open = false">Dashboard</a>
+
+            <a routerLink="/change-password"
+               (click)="accountMenu.open = false">Change Password</a>
+
+            <button type="button"
+                    (click)="accountMenu.open = false; logout()">
+              Log Out
+            </button>
+          </div>
+
+        </details>
 
       </div>
     </header>

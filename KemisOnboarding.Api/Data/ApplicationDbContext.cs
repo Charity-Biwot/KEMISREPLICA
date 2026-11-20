@@ -21,10 +21,27 @@ public class ApplicationDbContext : DbContext
     // QASO inspection records and supporting evidence
     public DbSet<QasoInspection> QasoInspections => Set<QasoInspection>();
     public DbSet<InspectionEvidence> InspectionEvidence => Set<InspectionEvidence>();
+    public DbSet<StoredFileRecord> StoredFiles => Set<StoredFileRecord>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<StoredFileRecord>(e =>
+{
+    e.Property(f => f.OriginalFileName).HasMaxLength(255);
+    e.Property(f => f.StoredFileName).HasMaxLength(255);
+    e.Property(f => f.RelativePath).HasMaxLength(500);
+    e.Property(f => f.ContentType).HasMaxLength(150);
+    e.Property(f => f.Category).HasMaxLength(100);
+    e.Property(f => f.UploadedByUserId).HasMaxLength(450);
+    e.Property(f => f.RelatedEntityType).HasMaxLength(100);
+    e.Property(f => f.RelatedEntityId).HasMaxLength(100);
+
+    e.HasIndex(f => f.Category);
+    e.HasIndex(f => f.InstitutionId);
+    e.HasIndex(f => f.UploadedAt);
+    e.HasIndex(f => new { f.RelatedEntityType, f.RelatedEntityId });
+});
 
         modelBuilder.Entity<Institution>(e =>
         {

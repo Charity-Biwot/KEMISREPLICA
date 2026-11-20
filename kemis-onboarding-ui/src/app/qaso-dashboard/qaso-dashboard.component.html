@@ -1,49 +1,82 @@
 
 <div class="dashboard-page">
 
-  <aside class="sidebar">
-
-    <img class="brand-img" src="/images/image.png" alt="Republic of Kenya Coat of Arms" />
-
-    <div class="user-profile">
-      <div class="avatar">Q</div>
-
-      <div>
-        <strong>QASO Officer</strong>
-        <small>Quality Assurance</small>
-      </div>
-    </div>
-
-    <nav>
-      <a class="active">Dashboard</a>
-      <a>Assigned Institutions</a>
-    </nav>
-
-    <button
-      class="logout-button"
-      (click)="logout()">
-      Logout
-    </button>
-
-  </aside>
-
   <main class="main-content">
 
+    <!-- NEW QASO TOP BAR -->
     <header class="topbar">
-      <div>
-        <h2>QASO Dashboard</h2>
-        <p>
-          Manage assigned institution inspections and certificate verification.
-        </p>
+
+      <div class="top-context">
+        <div class="context-marquee">
+          <span>You are Currently accessing QASO Information</span>
+        </div>
       </div>
 
-      <button
-        class="refresh-button"
-        (click)="loadInstitutions()"
-        [disabled]="loading">
-        {{ loading ? 'Loading...' : 'Refresh' }}
-      </button>
+      <div class="who">
+
+        <select class="level-select" aria-label="Education level">
+          <option selected>All Education Levels</option>
+          <option>Primary School Education</option>
+          <option>Junior School</option>
+          <option>Senior School</option>
+        </select>
+
+        <div class="alerts">
+          <svg viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.8">
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+            <path d="M10 21h4"/>
+          </svg>
+          <span>Notifications</span>
+        </div>
+
+        <div class="user">
+          <div class="user-avatar">Q</div>
+          <div class="user-details">
+            <strong>QASO Officer</strong>
+            <small>Quality Assurance</small>
+          </div>
+        </div>
+
+        <!-- POWER ICON WITH ATTACHED DROPDOWN CHEVRON -->
+        <details class="account-menu">
+
+          <summary title="Account menu" aria-label="Account menu">
+
+            <svg class="menu-chevron"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="2"
+                 stroke-linecap="round"
+                 stroke-linejoin="round">
+              <path d="m7 10 5 5 5-5"/>
+            </svg>
+
+            <svg class="power-icon"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="2"
+                 stroke-linecap="round">
+              <path d="M12 3v9"/>
+              <path d="M6.3 6.8a8 8 0 1 0 11.4 0"/>
+            </svg>
+
+          </summary>
+
+          <div class="account-dropdown">
+            <a routerLink="/qaso-dashboard">Dashboard</a>
+            <a routerLink="/change-password">Change Password</a>
+            <button type="button" (click)="logout()">Log Out</button>
+          </div>
+
+        </details>
+
+      </div>
+
     </header>
+    <!-- END OF NEW TOP BAR -->
 
     <section class="summary-grid">
 
